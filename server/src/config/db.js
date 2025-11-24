@@ -4,12 +4,14 @@ dotenv.config();
 
 const isDev = process.env.NODE_ENV !== "production";
 
+const { PG_HOST, PG_PORT, PG_DATABASE, PG_USER, PG_PASSWORD } = process.env;
+
 const pool = new Pool({
-	host: process.env.PG_HOST,
-	port: process.env.PG_PORT,
-	database: process.env.PG_DATABASE,
-	user: process.env.PG_USER,
-	password: process.env.PG_PASSWORD,
+	host: PG_HOST,
+	port: PG_PORT,
+	database: PG_DATABASE,
+	user: PG_USER,
+	password: PG_PASSWORD,
 	ssl: isDev ? false : { rejectUnauthorized: false },
 	max: 20,
 	idleTimeoutMillis: 30000,
@@ -29,9 +31,10 @@ const gracefulShutdown = async () => {
 	try {
 		await pool.end();
 		if (isDev) console.log("Database pool closed");
+      process.exit(0);
 	} catch (error) {
 		console.error("Error during shutdown:", error);
-		process.exit(-1);
+		process.exit(1);
 	}
 };
 
