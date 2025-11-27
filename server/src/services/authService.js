@@ -1,43 +1,60 @@
-import bcrypt from "bcryptjs";
-import * as authModel from "../models/authModel.js";
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import * as userModel from '../models/userModel.js';
+import { AppError } from '../utils/AppError.js';
 
-export const registerNewUser = async (username, email, password) => {
-   // error if username, email, password is empty
+const generateToken = (userId) => {
+	return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '7d' });
+};
 
-   // validate username length
+export const registerUser = async (username, email, password) => {
+	const existingUsername = await userModel.findByUsername(username);
+	if (existingUsername) throw new AppError('Username already taken', 400);
 
-   // validate email format
+	const existingEmail = await userModel.findByEmail(email);
+	if (existingEmail) throw new AppError('Email already in use', 400);
 
-   // validate password length
+	const salt = await bcrypt.genSalt(10);
+	const hashedPassword = await bcrypt.hash(password, salt);
 
-   const existingUsername = await authModel.findByUsername(username);
+	const user = await userModel.createUser(username, email, hashedPassword);
 
-   // error if username exist
+	await userModel.createProfile(user.user_id);
 
-   const existingEmail = await authModel.findByEmail(email);
+	const token = generateToken(user.user_id);
 
-   // error if email exist
-
-   const salt = await bcrypt.genSalt(10);
-   const hashedPassword = await bcrypt.hash(password, salt);
-
-	const user = await authModel.createUser(username, email, hashedPassword);
-
-	return user;
+	return {
+		token,
+		user: {
+			id: user.user_id,
+			username: user.username,
+			email: user.email,
+		},
+	};
 };
 
 export const loginUser = async (username, password) => {
-   // error if username, password is empty
+	const user = await userModel.findByUsername(username);
+	if (!user) throw new AppError('Invalid username or password', 401);
 
-   const user = await authModel.findByUsername(username);
+	const isPasswordValid = await bcrypt.compare(password, user.password);
+	if (!isPasswordValid) throw new AppError('Invalid username or password', 401);
 
-   // error if username doesn't exist
+	const token = generateToken(user.user_id);
 
-   const isPasswordValid = await bcrypt.compare(password, user.password);
+	return {
+		token,
+		user: {
+			id: user.user_id,
+			username: user.username,
+			email: user.email,
+		},
+	};
+};
 
-   // error if password doesn't match
+export const verifyUser = async (userId) => {
+	const user = await userModel.findByUserId(userId);
+	if (!user) throw new AppError('User not found', 404);
 
-   // generate token
-
-   // return token and user
-}
+	return user;
+};

@@ -1,11 +1,14 @@
-import * as authService from "../services/authService.js";
+import * as authService from '../services/authService.js';
 
 export const register = async (req, res, next) => {
 	try {
 		const { username, email, password } = req.body;
 
-		const user = await authService.registerNewUser(username, email, password);
-		res.status(201).json({ user });
+		const result = await authService.registerUser(username, email, password);
+		res.status(201).json({
+			token: result.token,
+			user: result.user,
+		});
 	} catch (error) {
 		next(error);
 	}
@@ -15,8 +18,21 @@ export const login = async (req, res, next) => {
 	try {
 		const { username, password } = req.body;
 
-		const user = await authService.loginUser(username, password);
-		res.status(200).json({ user });
+		const result = await authService.loginUser(username, password);
+		res.status(200).json({
+			token: result.token,
+			user: result.user,
+		});
+	} catch (error) {
+		next(error);
+	}
+};
+
+export const verify = async (req, res, next) => {
+	try {
+		const user = await authService.verifyUser(req.user.userId);
+
+		res.json({ user });
 	} catch (error) {
 		next(error);
 	}
