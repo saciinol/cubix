@@ -27,3 +27,23 @@ export const validateLogin = (req, res, next) => {
 
 	next();
 };
+
+const isValidUrl = (url) => {
+	try {
+		new URL(url);
+		return true;
+	} catch (error) {
+		return false;
+	}
+};
+
+export const validateCreatePost = (req, res, next) => {
+	const { content, image_url } = req.body;
+
+	if (!content) throw new AppError('Post content is required', 400);
+	if (content.trim().length === 0) throw new AppError('Post content cannot be empty', 400);
+	if (content.length > 500) throw new AppError('Post content cannot exceed 500 characters', 400);
+	if (image_url && !isValidUrl(image_url)) throw new AppError('Invalid image URL format', 400);
+
+	next();
+};

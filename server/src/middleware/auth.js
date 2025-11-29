@@ -5,7 +5,7 @@ import { AppError } from '../utils/AppError.js';
 export const authenticateToken = (req, res, next) => {
 	try {
 		const authHeader = req.headers['authorization'];
-		const token = authHeader && authHeader.split(' ')[1];
+		const token = authHeader?.split(' ')[1];
 
 		if (!token) throw new AppError('Access Denied. No token provided.', 401);
 
