@@ -33,12 +33,12 @@ export const registerUser = async (username, email, password) => {
 	};
 };
 
-export const loginUser = async (username, password) => {
-	const user = await userModel.findByUsername(username);
-	if (!user) throw new AppError('Invalid username or password', 401);
+export const loginUser = async (email, password) => {
+	const user = await userModel.findByEmail(email);
+	if (!user) throw new AppError('Invalid email or password', 401);
 
 	const isPasswordValid = await bcrypt.compare(password, user.password);
-	if (!isPasswordValid) throw new AppError('Invalid username or password', 401);
+	if (!isPasswordValid) throw new AppError('Invalid email or password', 401);
 
 	const token = generateToken(user.user_id);
 

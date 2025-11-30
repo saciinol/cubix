@@ -19,10 +19,14 @@ export const validateRegister = (req, res, next) => {
 };
 
 export const validateLogin = (req, res, next) => {
-	const { username, password } = req.body;
+	const { email, password } = req.body;
 
-	if (!username || !password) {
+	if (!email || !password) {
 		throw new AppError('All fields are required', 400);
+	}
+
+	if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+		throw new AppError('Invalid email format', 400);
 	}
 
 	next();
