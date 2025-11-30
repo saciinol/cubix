@@ -24,6 +24,17 @@ export const getPosts = async (req, res, next) => {
 	}
 };
 
+export const getPostById = async (req, res, next) => {
+	try {
+		const postId = parseInt(req.params.id);
+
+		const post = await postService.getPostById(postId);
+		res.json({ post });
+	} catch (error) {
+		next(error);
+	}
+};
+
 export const getUserPosts = async (req, res, next) => {
 	try {
 		const userId = parseInt(req.params.id);
@@ -40,7 +51,6 @@ export const deletePost = async (req, res, next) => {
 	try {
 		const postId = parseInt(req.params.id);
 		const userId = req.user.userId;
-      console.log('userId:', userId);
 
 		const result = await postService.deleteUserPost(postId, userId);
 		res.json(result);

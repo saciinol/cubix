@@ -15,6 +15,14 @@ export const getFeedPosts = async (page = 1, limit = 20) => {
 	return posts;
 };
 
+export const getPostById = async (postId) => {
+	const post = await postModel.findByPostId(postId);
+
+   if (!post) throw new AppError('Post not found', 400);
+
+	return post;
+};
+
 export const getUserPosts = async (userId, limit = 20) => {
 	const posts = await postModel.getPostsByUserId(userId, limit);
 	return posts;
