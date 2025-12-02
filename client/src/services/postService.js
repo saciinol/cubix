@@ -1,28 +1,31 @@
 import api from './api';
 
-export const postService = {
-	getPosts: async () => {
-		const response = await api.get('/');
-		return response.data.data;
-	},
+export const getPosts = async () => {
+	const response = await api.get('/posts');
+	return response.data.posts;
+};
 
-	getPostById: async (postId) => {
-		const response = await api.get(`/post/${postId}`);
-		return response.data.data;
-	},
+export const getFeedPosts = async () => {
+	const response = await api.get('/posts/feed');
+	return response.data.posts;
+};
 
-	getUserPosts: async (userId) => {
-		const response = await api.get(`/user/${userId}`);
-		return response.data.data;
-	},
+export const getPostById = async (postId) => {
+	const response = await api.get(`/posts/${postId}`);
+	return response.data.post;
+};
 
-	createPost: async (postData) => {
-		const response = await api.post('/', postData);
-		return response.data.data;
-	},
+export const getUserPosts = async (userId) => {
+	const response = await api.get(`/posts/user/${userId}`);
+	return response.data.posts;
+};
 
-	deletePost: async (userId) => {
-		const response = await api.delete(`/post/${userId}`);
-		return response.data;
-	},
+export const createPost = async (postData) => {
+	const response = await api.post('/posts', postData);
+	return response.data.post;
+};
+
+export const deletePost = async (postId) => {
+	const response = await api.delete(`/posts/${postId}`);
+	return response.data;
 };

@@ -26,7 +26,7 @@ export const findByPostId = async (postId) => {
 	return result.rows[0];
 };
 
-// get all posts for feed
+// get all posts
 export const getAllPosts = async (limit = 20, offset = 0) => {
 	const result = await pool.query(
 		`SELECT p.*, u.username, pr.avatar_url, pr.display_name
@@ -36,6 +36,24 @@ export const getAllPosts = async (limit = 20, offset = 0) => {
       ORDER BY p.created_at DESC
       LIMIT $1 OFFSET $2`,
 		[limit, offset]
+	);
+
+	return result.rows;
+};
+
+// get posts from people you follow
+export const getFeedPosts = async (userId, limit = 20, offset = 0) => {
+	const result = await pool.query(
+		`SELECT p.*, u.username, pr.avatar_url, pr.display_name
+      FROM posts p
+      JOIN users u ON p.user_id = u.user_id
+      JOIN profiles pr ON u.user_id = pr.user_id
+      WHERE p.user_id IN (
+         SELECT following_id FROM follows WHERE follower_id = $1
+      )
+      ORDER BY p.created_at DESC
+      LIMIT $2 OFFSET $3`,
+		[userId, limit, offset]
 	);
 
 	return result.rows;
@@ -61,5 +79,5 @@ export const getPostsByUserId = async (userId, limit = 20) => {
 export const deletePost = async (postId) => {
 	const result = await pool.query(`DELETE FROM posts WHERE post_id = $1 RETURNING *`, [postId]);
 
-   return result.rows[0];
+	return result.rows[0];
 };

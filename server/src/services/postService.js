@@ -9,9 +9,15 @@ export const createNewPost = async (userId, content, imageUrl = null) => {
 	return fullPost;
 };
 
-export const getFeedPosts = async (page = 1, limit = 20) => {
+export const getAllPosts = async (page = 1, limit = 20) => {
 	const offset = (page - 1) * limit;
 	const posts = await postModel.getAllPosts(limit, offset);
+	return posts;
+};
+
+export const getFeedPosts = async (userId, page = 1, limit = 20) => {
+	const offset = (page - 1) * limit;
+	const posts = await postModel.getFeedPosts(userId, limit, offset);
 	return posts;
 };
 

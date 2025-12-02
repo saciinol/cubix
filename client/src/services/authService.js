@@ -12,3 +12,10 @@ export const loginUser = async (email, password) => {
 	});
 	return response.data;
 };
+
+export const validateToken = async (token) => {
+	const response = await api.get('/auth/verify', {
+		headers: { Authorization: `Bearer ${token}` },
+	});
+	return response.data.user;
+};

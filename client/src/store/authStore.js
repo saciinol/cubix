@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { loginUser, registerUser, validateToken } from '../services/authService';
 
 const useAuthStore = create(
 	persist(
@@ -8,45 +9,70 @@ const useAuthStore = create(
 			user: null,
 			token: null,
 			isAuthenticated: false,
+			isInitialized: false,
 			isLoading: false,
 			error: null,
 
-			// actions
-			setUser: (user) => {
-				set({
-					user,
-					isAuthenticated: true,
-					error: null,
-				});
-			},
+			// initialize auth on app load
+			initAuth: async () => {
+				const { token } = get();
 
-			setToken: (token) => {
-				set({ token });
+				if (!token) {
+					set({ isInitialized: true, isAuthenticated: false });
+					return;
+				}
 
-				if (token) {
-					localStorage.setItem('authToken', token);
-				} else {
-					localStorage.removeItem('authtoken');
+				try {
+					const user = await validateToken(token);
+					set({
+						user,
+						isAuthenticated: true,
+						isInitialized: true,
+					});
+				// eslint-disable-next-line no-unused-vars
+				} catch (error) {
+					get().logout();
+					set({ isInitialized: true });
 				}
 			},
 
-			setLoading: (isLoading) => set({ isLoading }),
-
-			setError: (error) => set({ error }),
-
-			login: async (userData, token) => {
+			login: async (email, password) => {
 				set({ isLoading: true, error: null });
 
 				try {
-					get().setUser(userData);
-					get().setToken(token);
-
-					set({ isLoading: false });
-				} catch (error) {
+					const { user, token } = await loginUser(email, password);
 					set({
-						error: error.message,
+						user,
+						token,
+						isAuthenticated: true,
 						isLoading: false,
 					});
+				} catch (error) {
+					set({
+						error: error.message || 'Login failed',
+						isLoading: false,
+					});
+					throw error;
+				}
+			},
+
+			register: async (userData) => {
+				set({ isLoading: true, error: null });
+
+				try {
+					const { user, token } = await registerUser(userData);
+					set({
+						user,
+						token,
+						isAuthenticated: true,
+						isLoading: false,
+					});
+				} catch (error) {
+					set({
+						error: error.message || 'Registration failed',
+						isLoading: false,
+					});
+					throw error;
 				}
 			},
 
@@ -57,25 +83,9 @@ const useAuthStore = create(
 					isAuthenticated: false,
 					error: null,
 				});
-				localStorage.removeItem('authtoken');
 			},
 
 			clearError: () => set({ error: null }),
-
-			// check if user is authenticated
-			checkAuth: () => {
-				const token = localStorage.getItem('authtoken');
-				const { user } = get();
-
-				if (token && user) {
-					set({
-						isAuthenticated: true,
-						token,
-					});
-				} else {
-					get().logout();
-				}
-			},
 		}),
 		{
 			name: 'auth-storage',

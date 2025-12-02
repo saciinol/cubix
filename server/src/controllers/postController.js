@@ -17,7 +17,20 @@ export const getPosts = async (req, res, next) => {
 		const page = parseInt(req.query.page) || 1;
 		const limit = parseInt(req.query.limit) || 20;
 
-		const posts = await postService.getFeedPosts(page, limit);
+		const posts = await postService.getAllPosts(page, limit);
+		res.json({ posts, page, limit });
+	} catch (error) {
+		next(error);
+	}
+};
+
+export const getFeedPosts = async (req, res, next) => {
+	try {
+      const userId = req.user.userId;
+		const page = parseInt(req.query.page) || 1;
+		const limit = parseInt(req.query.limit) || 20;
+
+		const posts = await postService.getFeedPosts(userId, page, limit);
 		res.json({ posts, page, limit });
 	} catch (error) {
 		next(error);

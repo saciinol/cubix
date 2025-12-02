@@ -33,9 +33,11 @@ export const validateLogin = (req, res, next) => {
 };
 
 const isValidUrl = (url) => {
+	if (!url) return true;
+
 	try {
-		new URL(url);
-		return true;
+		const urlObj = new URL(url);
+		return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
 	} catch (error) {
 		return false;
 	}
@@ -50,4 +52,66 @@ export const validateCreatePost = (req, res, next) => {
 	if (image_url && !isValidUrl(image_url)) throw new AppError('Invalid image URL format', 400);
 
 	next();
+};
+
+export const validateUpdateProfile = (req, res, next) => {
+	const { display_name, bio, avatar_url, cover_url, location, website } = req.body;
+
+	if (
+		display_name === undefined &&
+		bio === undefined &&
+		avatar_url === undefined &&
+		cover_url === undefined &&
+		location === undefined &&
+		website === undefined
+	) {
+		throw new AppError('At least one field must be provided to update', 400);
+	}
+
+	if (display_name !== undefined && display_name !== null) {
+		if (typeof display_name !== 'string') {
+			throw new AppError('Display name must be string', 400);
+		}
+		if (display_name.trim().length > 100) {
+			throw new AppError('Display name cannot exceed 100 characters', 400);
+		}
+	}
+
+	if (bio !== undefined && bio !== null) {
+		if (typeof bio !== 'string') {
+			throw new AppError('Bio must be string', 400);
+		}
+		if (bio.length > 500) {
+			throw new AppError('Bio cannot exceed 500 characters', 400);
+		}
+	}
+
+	if (avatar_url !== undefined && avatar_url !== null) {
+		if (!isValidUrl(avatar_url)) {
+			throw new AppError('Invalid avatar URL format. Must be http or https.', 400);
+		}
+	}
+
+   if (cover_url !== undefined && cover_url !== null) {
+		if (!isValidUrl(cover_url)) {
+			throw new AppError('Invalid cover URL format. Must be http or https.', 400);
+		}
+	}
+
+   if (location !== undefined && location !== null) {
+		if (typeof location !== 'string') {
+			throw new AppError('Location must be string', 400);
+		}
+		if (location.length > 100) {
+			throw new AppError('Location cannot exceed 100 characters', 400);
+		}
+   }
+
+   if (website !== undefined && website !== null) {
+		if (!isValidUrl(website)) {
+			throw new AppError('Invalid website URL format. Must be http or https.', 400);
+		}
+	}
+
+   next();
 };
