@@ -62,7 +62,6 @@ CREATE TABLE comments (
   user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
   content TEXT NOT NULL,
   parent_comment_id INTEGER REFERENCES comments(comment_id) ON DELETE CASCADE,
-  is_deleted BOOLEAN DEFAULT false,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT comment_length CHECK (char_length(content) > 0 AND char_length(content) <= 300)

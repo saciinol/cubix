@@ -6,6 +6,7 @@ import corsOptions from './src/config/cors.js';
 import authRoutes from './src/routes/authRoutes.js';
 import postRoutes from './src/routes/postRoutes.js';
 import profileRoutes from './src/routes/profileRoutes.js'
+import commentRoutes from './src/routes/commentRoutes.js'
 import { errorHandler, notFoundHandler } from './src/middleware/errorHandler.js';
 
 dotenv.config();
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/posts', commentRoutes);
 
 app.get('/', (req, res) => {
    res.json({

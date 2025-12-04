@@ -3,16 +3,16 @@ import pool from '../config/db.js';
 export const getProfileByUserId = async (userId) => {
 	const result = await pool.query(
 		`SELECT
-         p.*,
+         pr.*,
          u.username,
          u.email,
          u.created_at as joined_at,
          (SELECT COUNT(*) FROM posts WHERE user_id = u.user_id) as post_count,
          (SELECT COUNT (*) FROM follows WHERE following_id = u.user_id) as followers_count,
          (SELECT COUNT (*) FROM follows WHERE follower_id = u.user_id) as following_count
-      FROM profiles p
-      JOIN users u ON p.user_id = u.user_id
-      WHERE p.user_id = $1`,
+      FROM profiles pr
+      JOIN users u ON pr.user_id = u.user_id
+      WHERE pr.user_id = $1`,
 		[userId]
 	);
 	return result.rows[0];

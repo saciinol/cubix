@@ -23,13 +23,13 @@ const useAuthStore = create(
 				}
 
 				try {
-					const user = await validateToken(token);
+					const user = await validateToken();
 					set({
 						user,
 						isAuthenticated: true,
 						isInitialized: true,
 					});
-				// eslint-disable-next-line no-unused-vars
+					// eslint-disable-next-line no-unused-vars
 				} catch (error) {
 					get().logout();
 					set({ isInitialized: true });
@@ -49,7 +49,7 @@ const useAuthStore = create(
 					});
 				} catch (error) {
 					set({
-						error: error.message || 'Login failed',
+						error: error.response?.data?.message || error.message || 'Login failed',
 						isLoading: false,
 					});
 					throw error;
@@ -69,7 +69,7 @@ const useAuthStore = create(
 					});
 				} catch (error) {
 					set({
-						error: error.message || 'Registration failed',
+						error: error.response?.data?.message || error.message || 'Registration failed',
 						isLoading: false,
 					});
 					throw error;

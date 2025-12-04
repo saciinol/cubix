@@ -40,7 +40,7 @@ const usePostStore = create((set, get) => ({
 		set({ isLoading: true, error: null });
 
 		try {
-			const posts = await getPosts();
+			const { posts } = await getPosts();
 			set({
 				allPosts: posts,
 				isLoading: false,
@@ -57,7 +57,7 @@ const usePostStore = create((set, get) => ({
 		set({ isLoading: true, error: null });
 
 		try {
-			const posts = await getFeedPostsAPI();
+			const { posts } = await getFeedPostsAPI();
 			set({
 				feedPosts: posts,
 				isLoading: false,
@@ -74,7 +74,7 @@ const usePostStore = create((set, get) => ({
 		set({ isLoading: true, error: null });
 
 		try {
-			const posts = await getUserPostsAPI(userId);
+			const { posts } = await getUserPostsAPI(userId);
 			get().setUserPosts(userId, posts);
 			set({ isLoading: false });
 		} catch (error) {
@@ -89,7 +89,7 @@ const usePostStore = create((set, get) => ({
 		set({ isLoading: true, error: null });
 
 		try {
-			const post = await getPostById(postId);
+			const { post } = await getPostById(postId);
 			set({
 				currentPost: post,
 				isLoading: false,
@@ -107,7 +107,7 @@ const usePostStore = create((set, get) => ({
 		set({ isSubmitting: true, error: null });
 
 		try {
-			const post = await createPostAPI({ content, image_url });
+			const { post } = await createPostAPI({ content, image_url });
 
 			// update user posts
 			const currentUserPosts = get().getUserPosts(userId);

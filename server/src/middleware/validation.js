@@ -46,10 +46,18 @@ const isValidUrl = (url) => {
 export const validateCreatePost = (req, res, next) => {
 	const { content, image_url } = req.body;
 
-	if (!content) throw new AppError('Post content is required', 400);
-	if (content.trim().length === 0) throw new AppError('Post content cannot be empty', 400);
-	if (content.length > 500) throw new AppError('Post content cannot exceed 500 characters', 400);
-	if (image_url && !isValidUrl(image_url)) throw new AppError('Invalid image URL format', 400);
+	if (!content) {
+		throw new AppError('Post content is required', 400);
+	}
+	if (content.trim().length === 0) {
+		throw new AppError('Post content cannot be empty', 400);
+	}
+	if (content.length > 500) {
+		throw new AppError('Post content cannot exceed 500 characters', 400);
+	}
+	if (image_url && !isValidUrl(image_url)) {
+		throw new AppError('Invalid image URL format', 400);
+	}
 
 	next();
 };
@@ -92,26 +100,51 @@ export const validateUpdateProfile = (req, res, next) => {
 		}
 	}
 
-   if (cover_url !== undefined && cover_url !== null) {
+	if (cover_url !== undefined && cover_url !== null) {
 		if (!isValidUrl(cover_url)) {
 			throw new AppError('Invalid cover URL format. Must be http or https.', 400);
 		}
 	}
 
-   if (location !== undefined && location !== null) {
+	if (location !== undefined && location !== null) {
 		if (typeof location !== 'string') {
 			throw new AppError('Location must be string', 400);
 		}
 		if (location.length > 100) {
 			throw new AppError('Location cannot exceed 100 characters', 400);
 		}
-   }
+	}
 
-   if (website !== undefined && website !== null) {
+	if (website !== undefined && website !== null) {
 		if (!isValidUrl(website)) {
 			throw new AppError('Invalid website URL format. Must be http or https.', 400);
 		}
 	}
 
-   next();
+	next();
+};
+
+export const validateCreateComment = (req, res, next) => {
+	const postId = parseInt(req.params.id);
+	const { content, parent_comment_id } = req.body;
+
+	if (isNaN(postId)) {
+		throw new AppError('Post ID must be a valid number', 400);
+	}
+
+	if (parent_comment_id !== undefined && typeof parent_comment_id !== 'number') {
+		throw new AppError('Parent Comment ID must be a number', 400);
+	}
+
+	if (!content) {
+		throw new AppError('Comment content is required', 400);
+	}
+	if (content.trim().length === 0) {
+		throw new AppError('Comment content cannot be empty', 400);
+	}
+	if (content.length > 300) {
+		throw new AppError('Comment content cannot exceed 300 characters', 400);
+	}
+
+	next();
 };
