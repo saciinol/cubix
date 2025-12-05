@@ -11,6 +11,5 @@ router.put('/:id', authenticateToken, validateUpdateProfile, updateProfile);
 
 // public
 router.get('/:id', getProfile);
-// getUserPosts here, import from postcontroller or combine it with getProfile
 
 export default router;
