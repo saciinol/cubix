@@ -8,6 +8,7 @@ import postRoutes from './src/routes/postRoutes.js';
 import profileRoutes from './src/routes/profileRoutes.js';
 import commentRoutes from './src/routes/commentRoutes.js';
 import followRoutes from './src/routes/followRoutes.js';
+import notificationRoutes from './src/routes/notificationRoutes.js';
 import { errorHandler, notFoundHandler } from './src/middleware/errorHandler.js';
 
 dotenv.config();
@@ -22,6 +23,7 @@ app.use('/api/posts', postRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/posts', commentRoutes);
 app.use('/api/users', followRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 app.get('/', (req, res) => {
 	res.json({

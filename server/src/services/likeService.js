@@ -1,4 +1,6 @@
 import * as likeModel from '../models/likeModel.js';
+import { createNotification } from '../models/notificationModel.js';
+import { findByPostId } from '../models/postModel.js';
 
 export const toggleLike = async (userId, postId) => {
 	const existingLike = await likeModel.checkIfLiked(userId, postId);
@@ -6,10 +8,17 @@ export const toggleLike = async (userId, postId) => {
 	if (existingLike) {
 		await likeModel.unlikePost(userId, postId);
 		const result = await likeModel.updateLikeCount(postId, -1);
-      return { liked: false, likes_count: result.likes_count };
+		return { liked: false, likes_count: result.likes_count };
 	} else {
 		await likeModel.likePost(userId, postId);
 		const result = await likeModel.updateLikeCount(postId, +1);
-      return { liked: true, likes_count: result.likes_count };
+
+		const receiver = await findByPostId(postId);
+
+		if (receiver.user_id !== userId) {
+			await createNotification(receiver.user_id, userId, 'like', postId, null);
+		}
+
+		return { liked: true, likes_count: result.likes_count };
 	}
 };

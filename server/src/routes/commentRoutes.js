@@ -10,6 +10,7 @@ router.get('/:id/comments', getComments);
 
 // protected
 router.post('/:id/comments', authenticateToken, validateCreateComment, createComment);
+// router.post('/:id/comments/like', authenticateToken, toggleLikeComment);
 router.delete('/comments/:id', authenticateToken, deleteComment);
 
 export default router;

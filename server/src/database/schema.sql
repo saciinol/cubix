@@ -91,6 +91,20 @@ CREATE TABLE follows (
 );
 
 -- ============================================
+-- NOTIFICATIONS TABLE
+-- ============================================
+CREATE TABLE notifications (
+   notification_id SERIAL PRIMARY KEY,
+   user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+   actor_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+   type VARCHAR(50) NOT NULL,
+   post_id INTEGER REFERENCES posts(post_id) ON DELETE CASCADE,
+   comment_id INTEGER REFERENCES comments(comment_id) ON DELETE CASCADE,
+   is_read BOOLEAN DEFAULT false,
+   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+
+-- ============================================
 -- INDEXES FOR PERFORMANCE
 -- ============================================
 CREATE INDEX idx_posts_user_id ON posts(user_id);
@@ -98,9 +112,12 @@ CREATE INDEX idx_posts_created_at ON posts(created_at DESC);
 CREATE INDEX idx_comments_post_id ON comments(post_id);
 CREATE INDEX idx_comments_user_id ON comments(user_id);
 CREATE INDEX idx_likes_post_id ON likes(post_id);
-CREATE INDEX idx_likes_user_id ON likes(user_id);
 CREATE INDEX idx_follows_follower_id ON follows(follower_id);
 CREATE INDEX idx_follows_following_id ON follows(following_id);
+CREATE INDEX idx_notifications_user_unread ON notifications(user_id, is_read, created_at DESC);
+CREATE INDEX idx_notifications_actor_id ON notifications(actor_id);
+CREATE INDEX idx_notifications_post_id ON notifications(post_id);
+CREATE INDEX idx_notifications_comment_id ON notifications(comment_id);
 
 -- ============================================
 -- SUCCESS MESSAGE

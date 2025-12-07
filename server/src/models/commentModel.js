@@ -2,7 +2,7 @@ import pool from '../config/db.js';
 
 export const findByCommentId = async (commentId) => {
 	const result = await pool.query(
-      `SELECT
+		`SELECT
          c.*,
          u.username,
          pr.avatar_url,
@@ -11,8 +11,8 @@ export const findByCommentId = async (commentId) => {
       JOIN users u ON c.user_id = u.user_id
       JOIN profiles pr ON u.user_id = pr.user_id
       WHERE c.comment_id = $1`,
-      [commentId]
-   );
+		[commentId]
+	);
 	return result.rows[0];
 };
 
@@ -49,5 +49,16 @@ export const createComment = async (postId, userId, content, parentCommentId = n
 export const deleteComment = async (commentId) => {
 	const result = await pool.query(`DELETE FROM comments WHERE comment_id = $1 RETURNING *`, [commentId]);
 
+	return result.rows[0];
+};
+
+export const updateCommentCount = async (postId, increment) => {
+	const result = await pool.query(
+		`UPDATE posts
+      SET comments_count = comments_count + $1
+      WHERE post_id = $2
+      RETURNING comments_count`,
+		[increment, postId]
+	);
 	return result.rows[0];
 };
