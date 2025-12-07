@@ -8,6 +8,8 @@ import {
 	deletePost as deletePostAPI,
 } from '../services/postService';
 
+// REMOVE ERROR STATE? BECAUSE INTERCEPTOR HANDLES ERRORS?
+
 const usePostStore = create((set, get) => ({
 	// state
 	allPosts: [],

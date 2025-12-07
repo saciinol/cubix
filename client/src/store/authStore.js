@@ -11,7 +11,6 @@ const useAuthStore = create(
 			isAuthenticated: false,
 			isInitialized: false,
 			isLoading: false,
-			error: null,
 
 			// initialize auth on app load
 			initAuth: async () => {
@@ -37,7 +36,7 @@ const useAuthStore = create(
 			},
 
 			login: async (email, password) => {
-				set({ isLoading: true, error: null });
+				set({ isLoading: true });
 
 				try {
 					const { user, token } = await loginUser(email, password);
@@ -49,15 +48,14 @@ const useAuthStore = create(
 					});
 				} catch (error) {
 					set({
-						error: error.response?.data?.message || error.message || 'Login failed',
 						isLoading: false,
 					});
-					throw error;
+               throw error;
 				}
 			},
 
 			register: async (userData) => {
-				set({ isLoading: true, error: null });
+				set({ isLoading: true });
 
 				try {
 					const { user, token } = await registerUser(userData);
@@ -69,7 +67,6 @@ const useAuthStore = create(
 					});
 				} catch (error) {
 					set({
-						error: error.response?.data?.message || error.message || 'Registration failed',
 						isLoading: false,
 					});
 					throw error;
@@ -81,18 +78,14 @@ const useAuthStore = create(
 					user: null,
 					token: null,
 					isAuthenticated: false,
-					error: null,
 				});
 			},
-
-			clearError: () => set({ error: null }),
 		}),
 		{
 			name: 'auth-storage',
 			partialize: (state) => ({
 				user: state.user,
 				token: state.token,
-				isAuthenticated: state.isAuthenticated,
 			}),
 		}
 	)

@@ -1,4 +1,4 @@
-const Home = () => {
+const Feed = () => {
   return (
     <div className="h-screen flex justify-center items-center">
       <h1 className="text-4xl">Hello, World!</h1>
@@ -6,4 +6,4 @@ const Home = () => {
   )
 }
 
-export default Home;
+export default Feed;

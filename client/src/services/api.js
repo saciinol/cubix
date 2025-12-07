@@ -72,6 +72,16 @@ api.interceptors.response.use(
 					console.error('Unauthorized access');
 				}
 
+				// eslint-disable-next-line no-case-declarations
+				const isLoginEndpoint = error.config.url.includes('/auth/login');
+
+				if (isLoginEndpoint) {
+					return Promise.reject({
+						message: data.message || 'Invalid credentials',
+						type: 'auth',
+					});
+				}
+
 				useAuthStore.getState().logout();
 				window.location.href = '/login';
 

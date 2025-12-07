@@ -1,1 +1,5 @@
 @import 'tailwindcss';
+
+@theme {
+   --color-muted: oklch(0.97 0 0);
+}
