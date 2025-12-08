@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Box, Loader2 } from 'lucide-react';
+import { Box, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useAuthStore } from '../store';
 
 import Button from '../components/ui/Button';
@@ -12,7 +12,10 @@ const Register = () => {
 		username: '',
 		email: '',
 		password: '',
+      confirmPassword: '',
 	});
+	const [showPassword, setShowPassword] = useState(false);
+	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 	const [validationErrors, setValidationErrors] = useState({});
 
 	const { register, isLoading } = useAuthStore();
@@ -55,8 +58,8 @@ const Register = () => {
 			navigate('/feed');
 			// eslint-disable-next-line no-unused-vars
 		} catch (error) {
-         return;
-      }
+			return;
+		}
 	};
 
 	return (
@@ -84,7 +87,7 @@ const Register = () => {
 									required
 								/>
 
-                        <p className={`ml-1 text-red-600 text-sm ${validationErrors.username ? 'opacity-100' : 'opacity-0'}`}>
+								<p className={`ml-1 text-red-600 text-sm ${validationErrors.username ? 'opacity-100' : 'opacity-0'}`}>
 									{validationErrors.username ? validationErrors.username : '&nbsp;'}
 								</p>
 							</div>
@@ -107,19 +110,58 @@ const Register = () => {
 							</div>
 
 							<div className="flex flex-col">
-								<Input
-									type="password"
-									name="password"
-									value={formData.password}
-									onChange={handleChange}
-									className={`${validationErrors.password ? 'border-red-600 focus:border-red-600' : ''}`}
-									placeholder="Password"
-									disabled={isLoading}
-									required
-								/>
+								<div className="flex items-center justify-end">
+									<Input
+										type={showPassword ? 'text' : 'password'}
+										name="password"
+										value={formData.password}
+										onChange={handleChange}
+										className={`${validationErrors.password ? 'border-red-600 focus:border-red-600' : ''}`}
+										placeholder="Password"
+										disabled={isLoading}
+										required
+									/>
+
+									<div
+										onClick={() => setShowPassword(!showPassword)}
+										className="absolute mr-2 cursor-pointer hover:bg-gray-100 rounded-full duration p-2"
+									>
+										{showPassword ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
+									</div>
+								</div>
 
 								<p className={`ml-1 text-red-600 text-sm ${validationErrors.password ? 'opacity-100' : 'opacity-0'}`}>
 									{validationErrors.password ? validationErrors.password : '&nbsp;'}
+								</p>
+							</div>
+
+							<div className="flex flex-col">
+								<div className="flex items-center justify-end">
+									<Input
+										type={showConfirmPassword ? 'text' : 'password'}
+										name="confirmPassword"
+										value={formData.confirmPassword}
+										onChange={handleChange}
+										className={`${validationErrors.confirmPassword ? 'border-red-600 focus:border-red-600' : ''}`}
+										placeholder="Confirm Password"
+										disabled={isLoading}
+										required
+									/>
+
+									<div
+										onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+										className="absolute mr-2 cursor-pointer hover:bg-gray-100 rounded-full duration p-2"
+									>
+										{showConfirmPassword ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
+									</div>
+								</div>
+
+								<p
+									className={`ml-1 text-red-600 text-sm ${
+										validationErrors.confirmPassword ? 'opacity-100' : 'opacity-0'
+									}`}
+								>
+									{validationErrors.confirmPassword ? validationErrors.confirmPassword : '&nbsp;'}
 								</p>
 							</div>
 

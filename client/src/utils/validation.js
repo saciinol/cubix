@@ -1,5 +1,5 @@
 export const validateRegister = (formData) => {
-	const { username, email, password } = formData;
+	const { username, email, password, confirmPassword } = formData;
 	const errors = {};
 
 	const usernameRegex = /^[a-zA-Z0-9_]+$/;
@@ -23,6 +23,10 @@ export const validateRegister = (formData) => {
 	} else if (password.length < 6) {
 		errors.password = ['Password must be at least 6 characters long'];
 	}
+
+   if (password !== confirmPassword) {
+      errors.confirmPassword = ['Passwords do not match'];
+   }
 
    return {
       isValid: Object.keys(errors).length === 0,
