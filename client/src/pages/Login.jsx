@@ -3,15 +3,15 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Box, Loader2 } from 'lucide-react';
 
 import { useAuthStore } from '../store';
-import Button from '../components/Button';
-import Input from '../components/Input';
+import Button from '../components/ui/Button';
+import Input from '../components/ui/Input';
 
 const Login = () => {
 	const [formData, setFormData] = useState({
 		email: '',
 		password: '',
 	});
-	const [localError, setLocalError] = useState('');
+	const [validationErrors, setValidationErrors] = useState('');
 
 	const { login, isLoading } = useAuthStore();
 	const navigate = useNavigate();
@@ -22,7 +22,7 @@ const Login = () => {
 	const handleChange = (e) => {
 		const { name, value } = e.target;
 
-		setLocalError('');
+		setValidationErrors('');
 
 		setFormData({
 			...formData,
@@ -31,18 +31,14 @@ const Login = () => {
 	};
 
 	const handleSubmit = async (e) => {
-		console.log('1. Submit started');
 		e.preventDefault();
-		console.log('2. Prevented default');
 
 		try {
-			console.log('3. Calling login...');
-			await login(formData.email, formData.password);
-			console.log('4. Login success');
+			await login(formData.email.trim(), formData.password);
 			navigate(from, { replace: true });
+		// eslint-disable-next-line no-unused-vars
 		} catch (error) {
-			console.log('5. Login failed:', error);
-			setLocalError('Invalid email or password.');
+			setValidationErrors('Invalid email or password.');
 		}
 	};
 
@@ -65,7 +61,7 @@ const Login = () => {
 									name="email"
 									value={formData.email}
 									onChange={handleChange}
-									className={`${localError ? 'border-red-600 focus:border-red-600' : ''}`}
+									className={`${validationErrors ? 'border-red-600 focus:border-red-600' : ''}`}
 									placeholder="Email"
 									disabled={isLoading}
 									required
@@ -78,14 +74,14 @@ const Login = () => {
 									name="password"
 									value={formData.password}
 									onChange={handleChange}
-									className={`${localError ? 'border-red-600 focus:border-red-600' : ''}`}
+									className={`${validationErrors ? 'border-red-600 focus:border-red-600' : ''}`}
 									placeholder="Password"
 									disabled={isLoading}
 									required
 								/>
 
-								<p className={`ml-1 text-red-600 text-sm ${localError ? 'opacity-100' : 'opacity-0'}`}>
-									{localError ? localError : '&nbsp;'}
+								<p className={`ml-1 text-red-600 text-sm ${validationErrors ? 'opacity-100' : 'opacity-0'}`}>
+									{validationErrors ? validationErrors : '&nbsp;'}
 								</p>
 							</div>
 

@@ -1,5 +1,10 @@
 import { AppError } from '../utils/AppError.js';
 
+const validateEmail = (email) => {
+   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+   return emailRegex.test(email);
+}
+
 export const validateRegister = (req, res, next) => {
 	const { username, email, password } = req.body;
 
@@ -11,7 +16,7 @@ export const validateRegister = (req, res, next) => {
 	if (!usernameRegex.test(username))
 		throw new AppError('Username can only contain letters, numbers, and underscores', 400);
 
-	if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new AppError('Invalid email format', 400);
+	if (!validateEmail(email)) throw new AppError('Invalid email format', 400);
 
 	if (password.length < 6) throw new AppError('Password must be at least 6 characters', 400);
 
@@ -25,7 +30,7 @@ export const validateLogin = (req, res, next) => {
 		throw new AppError('All fields are required', 400);
 	}
 
-	if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+	if (!validateEmail(email)) {
 		throw new AppError('Invalid email format', 400);
 	}
 
