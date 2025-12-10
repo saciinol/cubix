@@ -1,6 +1,10 @@
 import pool from "../config/db.js";
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 async function seed() {
 	console.log("Starting database seeding...");
@@ -12,7 +16,7 @@ async function seed() {
 		await pool.query(seedData);
 
 		console.log("Database seeded successfully!");
-		console.log("Test users created: john_doe, jane_smith, bob_wilson");
+		console.log("Test users created!");
 
 		process.exit(0);
 	} catch (error) {

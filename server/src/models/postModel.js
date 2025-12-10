@@ -16,10 +16,10 @@ export const createPost = async (userId, content, imageUrl = null) => {
 export const findByPostId = async (postId) => {
 	const result = await pool.query(
 		`SELECT p.*, u.username, pr.avatar_url, pr.display_name
-      FROM posts p
-      JOIN users u ON p.user_id = u.user_id
-      JOIN profiles pr ON u.user_id = pr.user_id
-      WHERE p.post_id = $1`,
+    FROM posts p
+    JOIN users u ON p.user_id = u.user_id
+    JOIN profiles pr ON u.user_id = pr.user_id
+    WHERE p.post_id = $1`,
 		[postId]
 	);
 

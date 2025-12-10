@@ -13,7 +13,7 @@ import {
 const usePostStore = create((set, get) => ({
 	// state
 	allPosts: [],
-	feedPosts: {},
+	feedPosts: [],
 	userPosts: {},
 	currentPost: null,
 	isLoading: false,

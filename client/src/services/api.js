@@ -48,8 +48,6 @@ api.interceptors.response.use(
 			}
 
 			const errorMessage = 'Network error. Please check your connection';
-			// toast
-			console.error(errorMessage);
 
 			return Promise.reject({
 				message: errorMessage,
@@ -62,8 +60,8 @@ api.interceptors.response.use(
 		switch (status) {
 			case 400:
 				return Promise.reject({
-					message: data.message || 'Bad request. Please check your input.',
-					errors: data.errors || [],
+					message: data?.message || 'Bad request. Please check your input.',
+					errors: data?.errors || [],
 					type: 'validation',
 				});
 
@@ -77,7 +75,7 @@ api.interceptors.response.use(
 
 				if (isLoginEndpoint) {
 					return Promise.reject({
-						message: data.message || 'Invalid credentials',
+						message: data?.message || 'Invalid credentials',
 						type: 'auth',
 					});
 				}
@@ -104,14 +102,14 @@ api.interceptors.response.use(
 
 			case 409:
 				return Promise.reject({
-					message: data.message || 'A conflict occurred.',
+					message: data?.message || 'A conflict occurred.',
 					type: 'conflict',
 				});
 
 			case 422:
 				return Promise.reject({
 					message: 'Please check your input and try again.',
-					errors: data.errors || [],
+					errors: data?.errors || [],
 					type: 'validation',
 				});
 
@@ -123,7 +121,7 @@ api.interceptors.response.use(
 
 			default:
 				return Promise.reject({
-					message: data.message || 'An unexpected error occurred.',
+					message: data?.message || 'An unexpected error occurred.',
 					type: 'unknown',
 				});
 		}

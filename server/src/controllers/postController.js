@@ -26,7 +26,7 @@ export const getPosts = async (req, res, next) => {
 
 export const getFeedPosts = async (req, res, next) => {
 	try {
-      const userId = req.user.userId;
+		const userId = req.user.userId;
 		const page = parseInt(req.query.page) || 1;
 		const limit = parseInt(req.query.limit) || 20;
 

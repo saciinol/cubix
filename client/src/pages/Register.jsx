@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Box, Eye, EyeOff, Loader2 } from 'lucide-react';
-import { useAuthStore } from '../store';
 
+import { useAuthStore } from '../store';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import { sanitizeInput, validateRegister } from '../utils/validation';
@@ -124,7 +124,7 @@ const Register = () => {
 
 									<div
 										onClick={() => setShowPassword(!showPassword)}
-										className="absolute mr-2 cursor-pointer hover:bg-gray-100 rounded-full duration p-2"
+										className="absolute mr-2 cursor-pointer hover:bg-gray-100 rounded-full duration p-2 select-none"
 									>
 										{showPassword ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
 									</div>
@@ -150,7 +150,7 @@ const Register = () => {
 
 									<div
 										onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-										className="absolute mr-2 cursor-pointer hover:bg-gray-100 rounded-full duration p-2"
+										className="absolute mr-2 cursor-pointer hover:bg-gray-100 rounded-full duration p-2 select-none"
 									>
 										{showConfirmPassword ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
 									</div>

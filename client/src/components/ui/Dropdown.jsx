@@ -7,17 +7,16 @@ const Dropdown = ({ trigger, children }) => {
 	useEffect(() => {
 		const handleClickOutside = (e) => {
 			if (menuRef.current && !menuRef.current.contains(e.target)) {
-				setOpen(false);
+            setOpen(false);
 			}
 		};
-
 		document.addEventListener('mousedown', handleClickOutside);
 		return () => document.removeEventListener('mousedown', handleClickOutside);
 	}, []);
 
 	return (
 		<div className="relative inline-block" ref={menuRef}>
-			<div onClick={() => setOpen((o) => !o)} className="cursor-pointer">
+			<div onClick={() => setOpen((o) => !o)} className="cursor-pointer select-none">
 				{trigger}
 			</div>
 

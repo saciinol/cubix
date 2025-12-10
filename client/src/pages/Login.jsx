@@ -82,7 +82,7 @@ const Login = () => {
 										required
 									/>
 
-                           <div onClick={() => setShowPassword(!showPassword)} className='absolute mr-2 cursor-pointer hover:bg-gray-100 rounded-full duration p-2'>
+                           <div onClick={() => setShowPassword(!showPassword)} className='absolute mr-2 cursor-pointer hover:bg-gray-100 rounded-full duration p-2 select-none'>
                            {showPassword ? (
 									   <Eye className="size-4" />
                            ) : (
@@ -91,20 +91,20 @@ const Login = () => {
                            </div>
 								</div>
 
-								<p className={`ml-1 text-red-600 text-sm select-none ${validationErrors ? 'opacity-100' : 'opacity-0'}`}>
+								<p className={`ml-1 text-red-600 text-sm ${validationErrors ? 'opacity-100' : 'opacity-0'}`}>
 									{validationErrors ? validationErrors : '&nbsp;'}
 								</p>
 							</div>
 
 							<div className="flex flex-col gap-2">
-								<Button type="submit" className="w-full select-none">
+								<Button type="submit" className="w-full">
 									{isLoading ? <Loader2 className="size-6 animate-spin" /> : 'Login'}
 								</Button>
 							</div>
 						</form>
 					</div>
 
-					<div className="text-gray-500 flex justify-center gap-1 text-base select-none">
+					<div className="text-gray-500 flex justify-center gap-1 text-base">
 						<p>Don't have an account?</p>
 						<Link to="/register" className="text-black font-medium hover:underline">
 							Sign up
