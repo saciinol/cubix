@@ -1,4 +1,6 @@
 import { MessageSquareMore, ThumbsUp, User } from 'lucide-react';
+import { usePostStore } from '../../store';
+import { useEffect } from 'react';
 
 function timeAgo(date) {
 	const now = Date.now();
@@ -28,6 +30,13 @@ function timeAgo(date) {
 }
 
 const PostCard = ({ post }) => {
+	const { isLiked, isPostLiked } = usePostStore();
+
+	useEffect(() => {
+		isPostLiked(post.post_id);
+	}, []);
+
+
 	return (
 		<div className="w-full">
 			<div className="flex justify-between m-2">
@@ -52,7 +61,9 @@ const PostCard = ({ post }) => {
 
 			<div className="flex gap-4 m-2">
 				<div className="flex items-end gap-1">
-					<ThumbsUp className="size-5" />
+					<div className="cursor-pointer">
+						<ThumbsUp className={`size-5 ${isLiked ? 'text-blue-500' : 'text-black'}`} />
+					</div>
 					<p className="text-sm">{post.likes_count}</p>
 				</div>
 				<div className="flex items-end gap-1">

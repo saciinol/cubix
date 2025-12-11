@@ -11,8 +11,6 @@ const Feed = () => {
 		loadFeedPosts();
 	}, []);
 
-	// console.log(feedPosts);
-
 	return (
 		<div className="max-w-2xl mx-auto flex flex-col divide-y divide-gray-300">
 			{isLoading ? (

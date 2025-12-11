@@ -22,3 +22,13 @@ export const toggleLike = async (userId, postId) => {
 		return { liked: true, likes_count: result.likes_count };
 	}
 };
+
+export const isLiked = async (userId, postId) => {
+	const existingLike = await likeModel.checkIfLiked(userId, postId);
+
+	if (!existingLike) {
+		return { liked: false };
+	}
+
+	return { liked: true };
+};

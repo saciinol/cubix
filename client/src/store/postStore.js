@@ -6,6 +6,7 @@ import {
 	getUserPosts as getUserPostsAPI,
 	createPost as createPostAPI,
 	deletePost as deletePostAPI,
+	isLiked as isLikedAPI,
 } from '../services/postService';
 
 // REMOVE ERROR STATE? BECAUSE INTERCEPTOR HANDLES ERRORS?
@@ -15,6 +16,7 @@ const usePostStore = create((set, get) => ({
 	allPosts: [],
 	feedPosts: [],
 	userPosts: {},
+	isLiked: false,
 	currentPost: null,
 	isLoading: false,
 	isSubmitting: false,
@@ -35,6 +37,13 @@ const usePostStore = create((set, get) => ({
 				[userId]: posts,
 			},
 		});
+	},
+
+	isPostLiked: async (postId) => {
+		try {
+			const { like } = await isLikedAPI(postId);
+			set({ isLiked: like.liked });
+		} catch (error) {}
 	},
 
 	// actions

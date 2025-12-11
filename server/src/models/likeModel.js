@@ -3,7 +3,7 @@ import pool from '../config/db.js';
 export const checkIfLiked = async (userId, postId) => {
 	const result = await pool.query(
 		`SELECT * FROM likes
-      WHERE user_id = $1 AND post_id = $2`,
+    WHERE user_id = $1 AND post_id = $2`,
 		[userId, postId]
 	);
 

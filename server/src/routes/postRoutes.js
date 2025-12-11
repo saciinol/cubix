@@ -7,7 +7,7 @@ import {
 	getUserPosts,
 	deletePost,
 } from '../controllers/postController.js';
-import { toggleLike } from '../controllers/likeController.js';
+import { isLIked, toggleLike } from '../controllers/likeController.js';
 import { validateCreatePost } from '../middleware/validation.js';
 import { authenticateToken } from '../middleware/auth.js';
 
@@ -23,6 +23,7 @@ router.get('/user/:id', getUserPosts);
 // protected routes
 router.post('/', authenticateToken, validateCreatePost, createPost);
 router.post('/:id/like', authenticateToken, toggleLike);
+router.get('/:id/like', authenticateToken, isLIked);
 router.delete('/:id', authenticateToken, deletePost);
 
 export default router;

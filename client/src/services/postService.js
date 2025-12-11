@@ -7,6 +7,7 @@ export const getPosts = async () => {
 
 export const getFeedPosts = async () => {
 	const response = await api.get('/posts/feed');
+
 	return response.data;
 };
 
@@ -27,5 +28,15 @@ export const createPost = async (postData) => {
 
 export const deletePost = async (postId) => {
 	const response = await api.delete(`/posts/${postId}`);
+	return response.data;
+};
+
+export const likePost = async (postId) => {
+	const response = await api.post(`/posts/${postId}/like`);
+	return response.data;
+};
+
+export const isLiked = async (postId) => {
+	const response = await api.get(`/posts/${postId}/like`);
 	return response.data;
 };
