@@ -1,11 +1,13 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import Feed from './pages/Feed';
-import Layout from './components/Layout';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import { useAuthStore } from './store';
 import { useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
+
+import { useAuthStore } from './store';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Layout from './components/Layout';
+import Feed from './pages/Feed';
+import Post from './components/feed/Post';
 
 const ProtectedRoute = ({ children }) => {
 	const { isAuthenticated } = useAuthStore();
@@ -33,7 +35,7 @@ function App() {
 
 	useEffect(() => {
 		initAuth();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	if (!isInitialized) {
@@ -64,11 +66,21 @@ function App() {
 						</PublicRoute>
 					}
 				/>
+
 				<Route
-					path="/feed"
+					path="/posts/feed"
 					element={
 						<ProtectedRoute>
 							<Feed />
+						</ProtectedRoute>
+					}
+				/>
+
+				<Route
+					path="/posts/:id"
+					element={
+						<ProtectedRoute>
+							<Post />
 						</ProtectedRoute>
 					}
 				/>

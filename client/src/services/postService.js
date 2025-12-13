@@ -7,7 +7,6 @@ export const getPosts = async () => {
 
 export const getFeedPosts = async () => {
 	const response = await api.get('/posts/feed');
-
 	return response.data;
 };
 
@@ -31,12 +30,7 @@ export const deletePost = async (postId) => {
 	return response.data;
 };
 
-export const likePost = async (postId) => {
+export const toggleLike = async (postId) => {
 	const response = await api.post(`/posts/${postId}/like`);
-	return response.data;
-};
-
-export const isLiked = async (postId) => {
-	const response = await api.get(`/posts/${postId}/like`);
 	return response.data;
 };

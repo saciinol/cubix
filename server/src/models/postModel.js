@@ -13,7 +13,21 @@ export const createPost = async (userId, content, imageUrl = null) => {
 };
 
 // get post by ID
-export const findByPostId = async (postId) => {
+export const findByPostId = async (userId, postId) => {
+	const result = await pool.query(
+		`SELECT p.*, u.username, pr.avatar_url, pr.display_name, l.like_id
+    FROM posts p
+    JOIN users u ON p.user_id = u.user_id
+    JOIN profiles pr ON u.user_id = pr.user_id
+    LEFT JOIN likes l ON p.post_id = l.post_id AND l.user_id = $1
+    WHERE p.post_id = $2`,
+		[userId, postId]
+	);
+
+	return result.rows[0];
+};
+
+export const findByPostIdForLikeNotif = async (postId) => {
 	const result = await pool.query(
 		`SELECT p.*, u.username, pr.avatar_url, pr.display_name
     FROM posts p
@@ -44,11 +58,12 @@ export const getAllPosts = async (limit = 20, offset = 0) => {
 // get posts from people you follow
 export const getFeedPosts = async (userId, limit = 20, offset = 0) => {
 	const result = await pool.query(
-		`SELECT p.*, u.username, pr.avatar_url, pr.display_name
+		`SELECT p.*, u.username, pr.avatar_url, pr.display_name, l.like_id
       FROM posts p
       JOIN follows f ON p.user_id = f.following_id AND f.follower_id = $1
       JOIN users u ON p.user_id = u.user_id
       JOIN profiles pr ON u.user_id = pr.user_id
+      LEFT JOIN likes l ON p.post_id = l.post_id AND l.user_id = $1
       ORDER BY p.created_at DESC
       LIMIT $2 OFFSET $3`,
 		[userId, limit, offset]

@@ -11,15 +11,3 @@ export const toggleLike = async (req, res, next) => {
 		next(error);
 	}
 };
-
-export const isLIked = async (req, res, next) => {
-	try {
-		const userId = req.user.userId;
-		const postId = parseInt(req.params.id);
-
-		const like = await likeService.isLiked(userId, postId);
-		res.status(200).json({ like });
-	} catch (error) {
-		next(error);
-	}
-};

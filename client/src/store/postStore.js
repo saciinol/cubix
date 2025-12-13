@@ -6,7 +6,7 @@ import {
 	getUserPosts as getUserPostsAPI,
 	createPost as createPostAPI,
 	deletePost as deletePostAPI,
-	isLiked as isLikedAPI,
+	toggleLike,
 } from '../services/postService';
 
 // REMOVE ERROR STATE? BECAUSE INTERCEPTOR HANDLES ERRORS?
@@ -16,7 +16,6 @@ const usePostStore = create((set, get) => ({
 	allPosts: [],
 	feedPosts: [],
 	userPosts: {},
-	isLiked: false,
 	currentPost: null,
 	isLoading: false,
 	isSubmitting: false,
@@ -39,11 +38,34 @@ const usePostStore = create((set, get) => ({
 		});
 	},
 
-	isPostLiked: async (postId) => {
-		try {
-			const { like } = await isLikedAPI(postId);
-			set({ isLiked: like.liked });
-		} catch (error) {}
+	// helper
+	updatePostInAllCollections: (postId, updateFn) => {
+		set((state) => {
+			// update allPosts
+			const updatedAllPosts = state.allPosts.map((post) => (post.post_id === postId ? updateFn(post) : post));
+
+			// update feedPosts
+			const updatedFeedPosts = state.feedPosts.map((post) => (post.post_id === postId ? updateFn(post) : post));
+
+			// update userPosts
+			const updatedUserPosts = {};
+			Object.keys(state.userPosts).forEach((userId) => {
+				updatedUserPosts[userId] = state.userPosts[userId].map((post) =>
+					post.post_id === postId ? updateFn(post) : post
+				);
+			});
+
+			// update currentPost
+			const updatedCurrentPost =
+				state.currentPost?.post_id === postId ? updateFn(state.currentPost) : state.currentPost;
+
+			return {
+				allPosts: updatedAllPosts,
+				feedPosts: updatedFeedPosts,
+				userPosts: updatedUserPosts,
+				currentPost: updatedCurrentPost,
+			};
+		});
 	},
 
 	// actions
@@ -114,6 +136,43 @@ const usePostStore = create((set, get) => ({
 		}
 	},
 
+	toggleLikePost: async (postId) => {
+		// save original statet for rollback
+		const originalState = {
+			allPosts: [...get().allPosts],
+			feedPosts: [...get().feedPosts],
+			userPosts: JSON.parse(JSON.stringify(get().userPosts)),
+			currentPost: get().currentPost ? { ...get().currentPost } : null,
+		};
+
+		// optimistic update
+		get().updatePostInAllCollections(postId, (post) => {
+			const isLiked = Boolean(post.like_id);
+			return {
+				...post,
+				like_id: isLiked ? null : 1,
+				likes_count: isLiked ? post.likes_count - 1 : post.likes_count + 1,
+			};
+		});
+
+		try {
+			const { like_id } = await toggleLike(postId);
+
+			if (like_id) {
+				get().updatePostInAllCollections(postId, (post) => ({
+					...post,
+					like_id,
+				}));
+			}
+		} catch (error) {
+			set(originalState);
+
+			set({ error: error.message || 'Failed to toggle like' });
+
+			throw error;
+		}
+	},
+
 	createPost: async (content, image_url, userId) => {
 		set({ isSubmitting: true, error: null });
 
@@ -122,13 +181,13 @@ const usePostStore = create((set, get) => ({
 
 			// update user posts
 			const currentUserPosts = get().getUserPosts(userId);
-			const updatedUserPosts = [...currentUserPosts, post];
+			const updatedUserPosts = [post, ...currentUserPosts];
 			get().setUserPosts(userId, updatedUserPosts);
 
 			// update all posts
 			const { allPosts } = get();
 			set({
-				allPosts: [...allPosts, post],
+				allPosts: [post, ...allPosts],
 				isSubmitting: false,
 			});
 
@@ -156,8 +215,14 @@ const usePostStore = create((set, get) => ({
 			// remove from all posts
 			const { allPosts } = get();
 			const updatedAllPosts = allPosts.filter((p) => p.post_id !== postId);
+
+			// remove from feed posts
+			const { feedPosts } = get();
+			const updatedFeedPosts = feedPosts.filter((p) => p.post_id !== postId);
+
 			set({
 				allPosts: updatedAllPosts,
+				feedPosts: updatedFeedPosts,
 				isSubmitting: false,
 			});
 		} catch (error) {

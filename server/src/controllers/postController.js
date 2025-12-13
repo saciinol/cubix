@@ -39,9 +39,10 @@ export const getFeedPosts = async (req, res, next) => {
 
 export const getPostById = async (req, res, next) => {
 	try {
+    const userId = req.user.userId;
 		const postId = parseInt(req.params.id);
 
-		const post = await postService.getPostById(postId);
+		const post = await postService.getPostById(userId, postId);
 		res.json({ post });
 	} catch (error) {
 		next(error);
