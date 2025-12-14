@@ -54,7 +54,7 @@ const PostCard = ({ post }) => {
 							<img src={post.avatar_url} alt="" className="size-11 rounded-full" />
 						</div>
 						<div>
-							<p className="text-base/tight">{post.display_name}</p>
+							<p className="text-base/tight font-bold">{post.display_name}</p>
 							<p className="text-sm/tight text-gray-700">@{post.username}</p>
 						</div>
 					</div>

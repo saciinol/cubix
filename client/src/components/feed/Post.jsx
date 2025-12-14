@@ -62,14 +62,14 @@ const Post = () => {
 
 	return (
 		<div className="w-full max-w-2xl mx-auto">
-			<div className='border-b border-gray-300'>
+			<div>
 				<div className="flex justify-between m-2">
 					<div className="flex items-center gap-2">
 						<div>
 							<img src={currentPost.avatar_url} alt="" className="size-11 rounded-full" />
 						</div>
 						<div>
-							<p className="text-base/tight">{currentPost.display_name}</p>
+							<p className="text-base/tight font-bold">{currentPost.display_name}</p>
 							<p className="text-sm/tight text-gray-700">@{currentPost.username}</p>
 						</div>
 					</div>

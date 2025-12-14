@@ -25,28 +25,30 @@ function timeAgo(date) {
 	return `${years}y`;
 }
 
-const CommentCard = ({ comment }) => {
+const CommentCard = ({ comment = null, reply = null }) => {
 	return (
 		<div className="w-full">
-			<div className="flex justify-between m-2">
-				<div className="flex items-center gap-2">
-					<div>
-						<img src={comment.avatar_url} alt="" className="size-8 rounded-full" />
-					</div>
-
-					<div>
-						<p className="text-sm/tight">{comment.display_name}</p>
-						<p className="text-xs/tight text-gray-700">@{comment.username}</p>
-					</div>
-				</div>
-
+			<div className={`flex items-start m-2 ${reply ? "ml-12" : ""}`}>
 				<div>
-					<p className="text-xs">{timeAgo(comment.created_at)}</p>
+					<img src={reply ? reply.avatar_url : comment.avatar_url} alt="" className={`rounded-full ${reply ? "size-6" : "size-8"}`} />
 				</div>
-			</div>
 
-			<div className="my-2">
-				<p className="mx-2 text-sm/5">{comment.content}</p>
+				<div className="mx-2">
+					<div className="bg-gray-200 rounded-xl p-2">
+						<div className="flex items-center gap-1">
+							<p className="text-xs/tight font-bold">{reply ? reply.display_name : comment.display_name}</p>
+							<p className="text-xs/tight text-gray-700">@{reply ? reply.username : comment.username}</p>
+						</div>
+
+						<div className="">
+							<p className="text-sm/5">{reply ? reply.content : comment.content}</p>
+						</div>
+					</div>
+
+					<div className="ml-2 mb-2">
+						<p className="text-xs">{reply ? timeAgo(reply.created_at) : timeAgo(comment.created_at)}</p>
+					</div>
+				</div>
 			</div>
 		</div>
 	);

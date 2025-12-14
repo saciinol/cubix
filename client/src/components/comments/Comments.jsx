@@ -7,7 +7,7 @@ import CommentCard from './CommentCard';
 
 const Comments = () => {
 	const { id } = useParams();
-	const { getComments, loadComments, isLoading } = useCommentStore();
+	const { getComments, getReplies, loadComments, isLoading } = useCommentStore();
 
 	useEffect(() => {
 		if (id) {
@@ -15,7 +15,7 @@ const Comments = () => {
 		}
 	}, [id, loadComments]);
 
-  const comments = getComments(id);
+	const comments = getComments(id);
 
 	if (isLoading) {
 		return (
@@ -24,12 +24,22 @@ const Comments = () => {
 			</div>
 		);
 	}
+	// const replies = getReplies(id, comment.comment_id);
+	{
+		/* getReplies(id, comment.comment_id) ? (
+      <div>he</div> */
+	}
 
 	return (
-		<div className='flex flex-col divide-y divide-gray-300'>
+		<div className="flex flex-col">
 			{comments.map((comment) => (
-        <CommentCard key={comment.comment_id} comment={comment} />
-      ))}
+				<div key={comment.comment_id}>
+					<CommentCard comment={comment} />
+
+					{getReplies(id, comment.comment_id) &&
+						getReplies(id, comment.comment_id).map((reply) => <CommentCard reply={reply} />)}
+				</div>
+			))}
 		</div>
 	);
 };
