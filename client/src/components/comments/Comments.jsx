@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 
@@ -7,7 +7,7 @@ import CommentCard from './CommentCard';
 
 const Comments = () => {
 	const { id } = useParams();
-	const { getComments, getReplies, loadComments, isLoading } = useCommentStore();
+	const { getComments, loadComments, isLoading } = useCommentStore();
 
 	useEffect(() => {
 		if (id) {
@@ -17,6 +17,17 @@ const Comments = () => {
 
 	const comments = getComments(id);
 
+	const repliesByParentId = useMemo(() => {
+		const map = {};
+		comments.forEach((c) => {
+			if (c.parent_comment_id) {
+				map[c.parent_comment_id] ||= [];
+				map[c.parent_comment_id].push(c);
+			}
+		});
+		return map;
+	}, [comments]);
+
 	if (isLoading) {
 		return (
 			<div className="min-h-screen flex items-center justify-center">
@@ -24,22 +35,20 @@ const Comments = () => {
 			</div>
 		);
 	}
-	// const replies = getReplies(id, comment.comment_id);
-	{
-		/* getReplies(id, comment.comment_id) ? (
-      <div>he</div> */
-	}
-
+  
 	return (
 		<div className="flex flex-col">
-			{comments.map((comment) => (
-				<div key={comment.comment_id}>
-					<CommentCard comment={comment} />
+			{comments
+				.filter((c) => !c.parent_comment_id)
+				.map((comment) => (
+					<div key={comment.comment_id}>
+						<CommentCard comment={comment} />
 
-					{getReplies(id, comment.comment_id) &&
-						getReplies(id, comment.comment_id).map((reply) => <CommentCard reply={reply} />)}
-				</div>
-			))}
+						{repliesByParentId[comment.comment_id]?.map((reply) => (
+							<CommentCard key={reply.comment_id} reply={reply} />
+						))}
+					</div>
+				))}
 		</div>
 	);
 };

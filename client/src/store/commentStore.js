@@ -15,17 +15,8 @@ const useCommentStore = create((set, get) => ({
 	// getters
 	getComments: (postId) => {
 		const { comments } = get();
-    const postComments = comments[postId];
-    const newPostComments = postComments?.filter((c) => c.parent_comment_id === null);
-		return newPostComments || [];
+		return comments[postId] || [];
 	},
-
-	getReplies: (postId, commentId) => {
-		const { comments } = get();
-    const postComments = comments[postId];
-    const replies = postComments?.filter((c) => c.parent_comment_id === commentId);
-    return replies || [];
-  },
 
 	// setters
 	setComments: (postId, postComments) => {
