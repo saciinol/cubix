@@ -25,12 +25,16 @@ function timeAgo(date) {
 	return `${years}y`;
 }
 
-const CommentCard = ({ comment = null, reply = null }) => {
+const CommentCard = ({ comment = null, reply = null, setReplyTo, setCommentData }) => {
 	return (
 		<div className="w-full">
-			<div className={`flex items-start m-2 ${reply ? "ml-12" : ""}`}>
+			<div className={`flex items-start m-2 ${reply ? 'ml-12' : ''}`}>
 				<div>
-					<img src={reply ? reply.avatar_url : comment.avatar_url} alt="" className={`rounded-full ${reply ? "size-6" : "size-8"}`} />
+					<img
+						src={reply ? reply.avatar_url : comment.avatar_url}
+						alt=""
+						className={`rounded-full ${reply ? 'size-6' : 'size-8'}`}
+					/>
 				</div>
 
 				<div className="mx-2">
@@ -45,8 +49,20 @@ const CommentCard = ({ comment = null, reply = null }) => {
 						</div>
 					</div>
 
-					<div className="ml-2 mb-2">
+					<div className="ml-2 mb-2 flex gap-2">
 						<p className="text-xs">{reply ? timeAgo(reply.created_at) : timeAgo(comment.created_at)}</p>
+						<button
+							onClick={() => {
+								setReplyTo(reply ? reply.display_name : comment.display_name);
+								setCommentData((prev) => ({
+									...prev,
+									parent_comment_id: reply ? reply.comment_id : comment.comment_id,
+								}));
+							}}
+							className="text-xs cursor-pointer"
+						>
+							Reply
+						</button>
 					</div>
 				</div>
 			</div>

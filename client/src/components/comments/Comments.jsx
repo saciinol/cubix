@@ -13,6 +13,7 @@ const Comments = () => {
 		content: '',
 		parent_comment_id: null,
 	});
+	const [replyTo, setReplyTo] = useState('');
 
 	useEffect(() => {
 		if (id) {
@@ -50,12 +51,13 @@ const Comments = () => {
 		}
 
 		try {
-      await createComment(id, {
+			await createComment(id, {
 				content: commentData.content.trim(),
 				parent_comment_id: commentData.parent_comment_id || null,
 			});
 
 			setCommentData({ content: '', parent_comment_id: null });
+			setReplyTo('');
 		} catch (error) {
 			console.error('Failed to create comment:', error);
 		}
@@ -76,10 +78,10 @@ const Comments = () => {
 					.filter((c) => !c.parent_comment_id)
 					.map((comment) => (
 						<div key={comment.comment_id}>
-							<CommentCard comment={comment} />
+							<CommentCard comment={comment} setReplyTo={setReplyTo} setCommentData={setCommentData} />
 
 							{repliesByParentId[comment.comment_id]?.map((reply) => (
-								<CommentCard key={reply.comment_id} reply={reply} />
+								<CommentCard key={reply.comment_id} reply={reply} setReplyTo={setReplyTo} setCommentData={setCommentData} />
 							))}
 						</div>
 					))}
@@ -87,6 +89,21 @@ const Comments = () => {
 
 			<div className="border-b border-gray-300 sticky bottom-0 z-30 bg-muted">
 				<form onSubmit={handleSubmit} className="m-2 mb-0 flex flex-col gap-2">
+					{replyTo && (
+						<div className="flex gap-1">
+							<p className="text-xs/2 ml-2">
+								Replying to <span className="font-semibold">{replyTo}</span>
+							</p>
+							<p className="text-xs/2">&middot;</p>
+							<button
+								className="text-xs/2 text-gray-700 cursor-pointer"
+								onClick={() => setReplyTo('')}
+							>
+								Cancel
+							</button>
+						</div>
+					)}
+
 					<div className="flex flex-col">
 						<textarea
 							name="content"

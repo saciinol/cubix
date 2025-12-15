@@ -44,13 +44,13 @@ const useCommentStore = create((set, get) => ({
 		}
 	},
 
-	createComment: async (postId, { content, parentCommentId = null }) => {
+	createComment: async (postId, { content, parent_comment_id = null }) => {
 		set({ isSubmitting: true, error: null });
 
 		try {
 			const { comment } = await createCommentAPI(postId, {
 				content,
-				...(parentCommentId && { parent_comment_id: parentCommentId }),
+				...(parent_comment_id && { parent_comment_id: parent_comment_id }),
 			});
 
 			// update comments
