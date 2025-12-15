@@ -60,10 +60,19 @@ export const getFeedPosts = async (userId, limit = 20, offset = 0) => {
 	const result = await pool.query(
 		`SELECT p.*, u.username, pr.avatar_url, pr.display_name, l.like_id
       FROM posts p
-      JOIN follows f ON p.user_id = f.following_id AND f.follower_id = $1
       JOIN users u ON p.user_id = u.user_id
       JOIN profiles pr ON u.user_id = pr.user_id
-      LEFT JOIN likes l ON p.post_id = l.post_id AND l.user_id = $1
+      LEFT JOIN likes l
+        ON p.post_id = l.post_id
+        AND l.user_id = $1
+      WHERE
+        p.user_Id = $1
+        OR EXISTS (
+          SELECT 1
+          FROM follows f
+          WHERE f.following_id = p.user_id
+          AND f.follower_id = $1
+        )
       ORDER BY p.created_at DESC
       LIMIT $2 OFFSET $3`,
 		[userId, limit, offset]

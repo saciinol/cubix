@@ -184,12 +184,16 @@ const usePostStore = create((set, get) => ({
 			const updatedUserPosts = [post, ...currentUserPosts];
 			get().setUserPosts(userId, updatedUserPosts);
 
-			// update all posts
-			const { allPosts } = get();
+			// update all and feed posts
+			const { allPosts, feedPosts } = get();
+
 			set({
 				allPosts: [post, ...allPosts],
+				feedPosts: [post, ...feedPosts],
 				isSubmitting: false,
 			});
+
+			//update feed posts
 
 			return post;
 		} catch (error) {
@@ -212,12 +216,12 @@ const usePostStore = create((set, get) => ({
 			const updatedUserPosts = currentUserPosts.filter((p) => p.post_id !== postId);
 			get().setUserPosts(userId, updatedUserPosts);
 
+			const { allPosts, feedPosts } = get();
+
 			// remove from all posts
-			const { allPosts } = get();
 			const updatedAllPosts = allPosts.filter((p) => p.post_id !== postId);
 
 			// remove from feed posts
-			const { feedPosts } = get();
 			const updatedFeedPosts = feedPosts.filter((p) => p.post_id !== postId);
 
 			set({

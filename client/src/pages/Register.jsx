@@ -12,7 +12,7 @@ const Register = () => {
 		username: '',
 		email: '',
 		password: '',
-      confirmPassword: '',
+		confirmPassword: '',
 	});
 	const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -56,8 +56,7 @@ const Register = () => {
 				password: formData.password,
 			});
 			navigate('/feed');
-			// eslint-disable-next-line no-unused-vars
-		} catch (error) {
+		} catch {
 			return;
 		}
 	};
@@ -77,7 +76,7 @@ const Register = () => {
 						<form onSubmit={handleSubmit} className="flex flex-col">
 							<div className="flex flex-col">
 								<Input
-									type="username"
+									type="text"
 									name="username"
 									value={formData.username}
 									onChange={handleChange}

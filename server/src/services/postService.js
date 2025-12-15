@@ -4,7 +4,7 @@ import { AppError } from '../utils/AppError.js';
 export const createNewPost = async (userId, content, imageUrl = null) => {
 	const post = await postModel.createPost(userId, content, imageUrl);
 
-	const fullPost = await postModel.findByPostId(post.post_id);
+	const fullPost = await postModel.findByPostIdForLikeNotif(post.post_id);
 
 	return fullPost;
 };
@@ -35,7 +35,7 @@ export const getUserPosts = async (userId, limit = 20) => {
 };
 
 export const deleteUserPost = async (postId, userId) => {
-	const post = await postModel.findByPostId(postId);
+	const post = await postModel.findByPostIdForLikeNotif(postId);
 
 	if (!post) throw new AppError('Post not found', 400);
 

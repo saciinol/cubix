@@ -1,6 +1,6 @@
 import * as commentModel from '../models/commentModel.js';
 import { createNotification } from '../models/notificationModel.js';
-import { findByPostId } from '../models/postModel.js';
+import { findByPostIdForLikeNotif } from '../models/postModel.js';
 import { AppError } from '../utils/AppError.js';
 
 export const getComments = async (postId, limit = 20) => {
@@ -22,7 +22,7 @@ export const createNewComment = async (postId, userId, content, parentCommentId 
 			await createNotification(replyReceiver.user_id, userId, 'reply', postId, parentCommentId);
 		}
 	} else {
-		const commentReceiver = await findByPostId(postId);
+		const commentReceiver = await findByPostIdForLikeNotif(postId);
 		if (commentReceiver.user_id !== userId) {
 			await createNotification(commentReceiver.user_id, userId, 'comment', postId, null);
 		}

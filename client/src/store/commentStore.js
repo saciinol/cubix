@@ -44,15 +44,18 @@ const useCommentStore = create((set, get) => ({
 		}
 	},
 
-	createComment: async (postId, { content, parent_comment_id }) => {
+	createComment: async (postId, { content, parentCommentId = null }) => {
 		set({ isSubmitting: true, error: null });
 
 		try {
-			const { comment } = await createCommentAPI(postId, { content, parent_comment_id });
+			const { comment } = await createCommentAPI(postId, {
+				content,
+				...(parentCommentId && { parent_comment_id: parentCommentId }),
+			});
 
 			// update comments
 			const currentPostComments = get().getComments(postId);
-			const updatedPostComments = [comment, ...currentPostComments];
+			const updatedPostComments = [...currentPostComments, comment];
 			get().setComments(postId, updatedPostComments);
 
 			set({
