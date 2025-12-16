@@ -1,65 +1,55 @@
-function timeAgo(date) {
-	const now = Date.now();
-	const past = new Date(date).getTime();
-	const diff = now - past;
+import timeAgo from "../timeAgo";
 
-	const seconds = Math.floor(diff / 1000);
-	if (seconds < 60) return `${seconds}s`;
+const CommentCard = ({ comment, setReplyTo, setCommentData }) => {
+	const handleReply = () => {
+		setReplyTo(comment.display_name);
+		setCommentData((prev) => ({
+			...prev,
+			parent_comment_id: comment.comment_id,
+		}));
 
-	const minutes = Math.floor(seconds / 60);
-	if (minutes < 60) return `${minutes}m`;
+		setTimeout(() => {
+			const textarea = document.querySelector('textarea[name="content"]');
+			textarea?.focus();
+			textarea?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+		}, 100);
+	};
 
-	const hours = Math.floor(minutes / 60);
-	if (hours < 24) return `${hours}h`;
-
-	const days = Math.floor(hours / 24);
-	if (days < 7) return `${days}d`;
-
-	const weeks = Math.floor(days / 7);
-	if (weeks < 4) return `${weeks}w`;
-
-	const months = Math.floor(days / 30);
-	if (months < 12) return `${months}mo`;
-
-	const years = Math.floor(days / 365);
-	return `${years}y`;
-}
-
-const CommentCard = ({ comment = null, reply = null, setReplyTo, setCommentData }) => {
 	return (
-		<div className="w-full">
-			<div className={`flex items-start m-2 ${reply ? 'ml-12' : ''}`}>
-				<div>
+		<div className="w-full py-1">
+			<div className="flex items-start gap-2">
+				<div className="shrink-0">
 					<img
-						src={reply ? reply.avatar_url : comment.avatar_url}
-						alt=""
-						className={`rounded-full ${reply ? 'size-6' : 'size-8'}`}
+						src={comment.avatar_url || '/default-avatar.png'}
+						alt={comment.username}
+						className="rounded-full w-8 h-8 object-cover"
 					/>
 				</div>
 
-				<div className="mx-2">
-					<div className="bg-gray-200 rounded-xl p-2">
-						<div className="flex items-center gap-1">
-							<p className="text-xs/tight font-bold">{reply ? reply.display_name : comment.display_name}</p>
-							<p className="text-xs/tight text-gray-700">@{reply ? reply.username : comment.username}</p>
-						</div>
-
-						<div className="">
-							<p className="text-sm/5">{reply ? reply.content : comment.content}</p>
-						</div>
+				<div className="flex-1 min-w-0">
+					<div className="flex items-center gap-1 flex-wrap">
+						<p className="text-sm font-semibold text-gray-900">
+							{comment.display_name || comment.username}
+						</p>
+						<p className="text-xs text-gray-500">
+							@{comment.username}
+						</p>
+						<span className="text-xs text-gray-400">·</span>
+						<p className="text-xs text-gray-500">
+							{timeAgo(comment.created_at)}
+						</p>
 					</div>
 
-					<div className="ml-2 mb-2 flex gap-2">
-						<p className="text-xs">{reply ? timeAgo(reply.created_at) : timeAgo(comment.created_at)}</p>
+					<div className="mt-1">
+						<p className="text-sm text-gray-800 whitespace-pre-wrap wrap-break-word">
+							{comment.content}
+						</p>
+					</div>
+
+					<div className="mt-2">
 						<button
-							onClick={() => {
-								setReplyTo(reply ? reply.display_name : comment.display_name);
-								setCommentData((prev) => ({
-									...prev,
-									parent_comment_id: reply ? reply.comment_id : comment.comment_id,
-								}));
-							}}
-							className="text-xs cursor-pointer"
+							onClick={handleReply}
+							className="text-xs text-gray-600 hover:text-blue-600 font-medium transition-colors cursor-pointer"
 						>
 							Reply
 						</button>

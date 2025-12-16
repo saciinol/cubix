@@ -17,7 +17,7 @@ const Layout = ({ children }) => {
 			<header className={`sticky top-0 z-40 w-full bg-white shadow-sm`}>
 				<nav className="max-w-7xl mx-auto flex justify-between items-center p-1.5">
 					<Link
-						to="/feed"
+						to="/posts/feed"
 						className="py-1 px-2 flex items-center justify-center gap-1 hover:bg-gray-100 rounded-md duration-100"
 					>
 						<Box className="size-7" />
