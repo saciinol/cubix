@@ -49,7 +49,7 @@ const PostCard = ({ post }) => {
 		<div className="w-full">
 			<Link to={`/posts/${post.post_id}`}>
 				<div className="flex justify-between m-2">
-					<div className="flex items-center gap-2">
+					<Link to={`/profile/${post.user_id}`} className="flex items-center gap-2">
 						<div>
 							<img src={post.avatar_url} alt="" className="size-11 rounded-full" />
 						</div>
@@ -57,7 +57,7 @@ const PostCard = ({ post }) => {
 							<p className="text-base/tight font-bold">{post.display_name}</p>
 							<p className="text-sm/tight text-gray-700">@{post.username}</p>
 						</div>
-					</div>
+					</Link>
 					<div>
 						<p className="text-xs">{timeAgo(post.created_at)}</p>
 					</div>

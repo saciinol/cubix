@@ -4,8 +4,12 @@ import { useAuthStore } from '../store';
 import Dropdown, { DropdownItem } from './ui/Dropdown';
 
 const Layout = ({ children }) => {
-	const { logout } = useAuthStore();
+	const { user, logout } = useAuthStore();
 	const navigate = useNavigate();
+
+  const handleProfile = () => {
+    navigate(`/profile/${user.user_id}`);
+  }
 
 	const handleLogout = () => {
 		logout();
@@ -26,7 +30,7 @@ const Layout = ({ children }) => {
 
 					<div className="py-1 px-2 flex items-center justify-center gap-1 cursor-pointer">
 						<Dropdown trigger={<User className="bg-blue-300 size-8 rounded-full" />}>
-							<DropdownItem>
+							<DropdownItem onClick={handleProfile}>
 								<User className="size-5" />
 								<p className="text-sm/1">Profile</p>
 							</DropdownItem>

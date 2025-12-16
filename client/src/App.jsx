@@ -8,6 +8,7 @@ import Register from './pages/Register';
 import Layout from './components/Layout';
 import Feed from './pages/Feed';
 import Post from './components/feed/Post';
+import Profile from './pages/Profile';
 
 const ProtectedRoute = ({ children }) => {
 	const { isAuthenticated } = useAuthStore();
@@ -81,6 +82,15 @@ function App() {
 					element={
 						<ProtectedRoute>
 							<Post />
+						</ProtectedRoute>
+					}
+				/>
+
+				<Route
+					path="/profile/:id"
+					element={
+						<ProtectedRoute>
+							<Profile />
 						</ProtectedRoute>
 					}
 				/>

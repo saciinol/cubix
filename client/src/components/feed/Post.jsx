@@ -1,6 +1,6 @@
 import { Loader2, MessageSquareMore, ThumbsUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 import { usePostStore } from '../../store';
 import Comments from '../comments/Comments';
@@ -38,7 +38,7 @@ const Post = () => {
 		<div className="w-full max-w-2xl mx-auto">
 			<div>
 				<div className="flex justify-between m-2">
-					<div className="flex items-center gap-2">
+					<Link to={`/profile/${currentPost.user_id}`} className="flex items-center gap-2">
 						<div>
 							<img src={currentPost.avatar_url} alt="" className="size-11 rounded-full" />
 						</div>
@@ -46,7 +46,7 @@ const Post = () => {
 							<p className="text-base/tight font-bold">{currentPost.display_name}</p>
 							<p className="text-sm/tight text-gray-700">@{currentPost.username}</p>
 						</div>
-					</div>
+					</Link>
 					<div>
 						<p className="text-xs">{timeAgo(currentPost.created_at)}</p>
 					</div>

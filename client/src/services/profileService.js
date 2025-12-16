@@ -5,8 +5,8 @@ export const getMyProfile = async () => {
 	return response.data;
 };
 
-export const updateProfile = async (userId) => {
-	const response = await api.put(`/profile/${userId}`);
+export const updateProfile = async (userId, updates) => {
+	const response = await api.put(`/profile/${userId}`, updates);
 	return response.data;
 };
 

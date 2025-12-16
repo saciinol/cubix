@@ -52,9 +52,14 @@ const PostList = () => {
 							name="content"
 							value={postData.content}
 							onChange={handleChange}
-							className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-base placeholder:text-gray-500 focus:placeholder:text-gray-400 focus:outline-none focus:border-gray-500 disabled:cursor-not-allowed disabled:opacity-50"
+							className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-base placeholder:text-gray-500 focus:placeholder:text-gray-400 focus:outline-none focus:border-gray-500 disabled:cursor-not-allowed disabled:opacity-50 resize-none overflow-hidden"
 							placeholder="Write your thoughts..."
 							disabled={isSubmitting}
+							rows={1}
+							onInput={(e) => {
+								e.target.style.height = 'auto';
+								e.target.style.height = `${e.target.scrollHeight}px`;
+							}}
 						></textarea>
 					</div>
 

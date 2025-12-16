@@ -10,6 +10,6 @@ router.get('/me', authenticateToken, getMyProfile);
 router.put('/:id', authenticateToken, validateUpdateProfile, updateProfile);
 
 // public
-router.get('/:id', getProfile);
+router.get('/:id', authenticateToken, getProfile);
 
 export default router;
