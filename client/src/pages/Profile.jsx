@@ -25,19 +25,24 @@ const Profile = () => {
 
 	return (
 		<div className="max-w-4xl mx-auto">
-			<div>
-				<img src={profile.cover_url} alt="" />
-				<img src={profile.avatar_url} alt="" />
+			<div className='flex flex-col items-center mb-2'>
+				<div className='w-full'>
+					<img src={profile.cover_url} alt="" />
+				</div>
+				<div className='-mt-12 size-24 md:-mt-18 md:size-36'>
+					<img src={profile.avatar_url} alt="" className='rounded-full' />
+				</div>
 			</div>
 
-			<div>
-				<p>{profile.display_name}</p>
-				<p>@{profile.username}</p>
+			<div className='flex flex-col items-center mb-2'>
+				<p className='font-bold text-base'>{profile.display_name}</p>
+				<p className='text-sm/3'>@{profile.username}</p>
 			</div>
 
 			<div>
 				<p>{profile.bio}</p>
 				<p>{profile.location}</p>
+				<p>{profile.website}</p>
 			</div>
 		</div>
 	);

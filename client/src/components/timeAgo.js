@@ -9,7 +9,7 @@ export default function timeAgo(date) {
 	const days = Math.floor(hours / 24);
 
 	// if more than 3 days, show date
-	if (days > 3) {
+	if (days > 6) {
 		return new Date(date).toLocaleDateString('en-US', {
 			month: 'short',
 			day: 'numeric',

@@ -1,6 +1,6 @@
 import { Loader2, MessageSquareMore, ThumbsUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { usePostStore } from '../../store';
 import Comments from '../comments/Comments';
@@ -10,8 +10,11 @@ const Post = () => {
 	const { id } = useParams();
 	const { currentPost, loadPost, toggleLikePost, isLoading } = usePostStore();
 	const [isLiking, setIsLiking] = useState(false);
+	const navigate = useNavigate();
 
 	useEffect(() => {
+		window.scrollTo(0, 0);
+
 		if (id) loadPost(id);
 	}, [id, loadPost]);
 
@@ -26,6 +29,10 @@ const Post = () => {
 		}
 	};
 
+	const handleProfileClick = () => {
+		navigate(`/profile/${currentPost.user_id}`);
+	};
+
 	if (isLoading || !currentPost) {
 		return (
 			<div className="min-h-screen flex items-center justify-center">
@@ -38,42 +45,55 @@ const Post = () => {
 		<div className="w-full max-w-2xl mx-auto">
 			<div>
 				<div className="flex justify-between m-2">
-					<Link to={`/profile/${currentPost.user_id}`} className="flex items-center gap-2">
-						<div>
-							<img src={currentPost.avatar_url} alt="" className="size-11 rounded-full" />
-						</div>
+					<div onClick={handleProfileClick} className="flex items-center gap-2 cursor-pointer">
+						<img
+							src={currentPost.avatar_url}
+							alt={currentPost.username}
+							className="size-11 rounded-full object-cover"
+						/>
 						<div>
 							<p className="text-base/tight font-bold">{currentPost.display_name}</p>
 							<p className="text-sm/tight text-gray-700">@{currentPost.username}</p>
 						</div>
-					</Link>
-					<div>
-						<p className="text-xs">{timeAgo(currentPost.created_at)}</p>
 					</div>
+					<p className="text-xs text-gray-500">{timeAgo(currentPost.created_at)}</p>
 				</div>
 
-				<div>
-					<p className="mx-2 text-base/5">{currentPost.content}</p>
-					<img src={currentPost.image_url} alt="" className="m-2" />
-				</div>
-
-				<div className="flex gap-4 m-2">
-					<div className="flex items-end gap-1 select-none">
-						<ThumbsUp
-							onClick={handleLike}
-							disabled={isLiking}
-							className={`size-5 cursor-pointer ${currentPost.like_id ? 'text-blue-500' : 'text-black'}`}
+				<div className="mx-2 mb-2">
+					<p className="text-base leading-snug">{currentPost.content}</p>
+					{currentPost.image_url && (
+						<img
+							src={currentPost.image_url}
+							alt={currentPost.username}
+							className="my-2 rounded-lg w-full object-cover max-h-96"
 						/>
-						<p className="text-sm">{currentPost.likes_count}</p>
-					</div>
-					<div className="flex items-end gap-1">
+					)}
+				</div>
+
+				<div className="flex gap-4 mx-2 mb-2 text-gray-600">
+					<button
+						onClick={handleLike}
+						disabled={isLiking}
+						className={`flex items-center gap-1.5 group cursor-pointer ${
+							currentPost.like_id ? 'text-blue-500' : 'hover:text-blue-500 transition-colors disabled:opacity-50'
+						}`}
+					>
+						<ThumbsUp
+							className={`size-5 ${
+								currentPost.like_id ? 'fill-current' : 'group-hover:scale-110 transition-transform'
+							}`}
+						/>
+						<span className="text-sm font-medium">{currentPost.likes_count}</span>
+					</button>
+
+					<div className="flex items-center gap-1.5 hover:text-green-500 transition-colors">
 						<MessageSquareMore className="size-5" />
-						<p className="text-sm">{currentPost.comments_count}</p>
+						<p className="text-sm font-medium">{currentPost.comments_count}</p>
 					</div>
 				</div>
 			</div>
 
-      <Comments />
+			<Comments />
 		</div>
 	);
 };

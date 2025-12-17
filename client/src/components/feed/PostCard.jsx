@@ -1,84 +1,76 @@
-import { MessageSquareMore, ThumbsUp } from 'lucide-react';
+import { MessageSquareMore, ThumbsUp, User } from 'lucide-react';
 import { useState } from 'react';
-import { toggleLike } from '../../services/postService';
-import { Link } from 'react-router-dom';
-
-function timeAgo(date) {
-	const now = Date.now();
-	const past = new Date(date).getTime();
-	const diff = now - past;
-
-	const seconds = Math.floor(diff / 1000);
-	if (seconds < 60) return `${seconds}s`;
-
-	const minutes = Math.floor(seconds / 60);
-	if (minutes < 60) return `${minutes}m`;
-
-	const hours = Math.floor(minutes / 60);
-	if (hours < 24) return `${hours}h`;
-
-	const days = Math.floor(hours / 24);
-	if (days < 7) return `${days}d`;
-
-	const weeks = Math.floor(days / 7);
-	if (weeks < 4) return `${weeks}w`;
-
-	const months = Math.floor(days / 30);
-	if (months < 12) return `${months}mo`;
-
-	const years = Math.floor(days / 365);
-	return `${years}y`;
-}
+import { useNavigate } from 'react-router-dom';
+import { usePostStore } from '../../store';
+import timeAgo from '../timeAgo';
 
 const PostCard = ({ post }) => {
-	const [isLiked, setIsLiked] = useState(post.like_id ? true : false);
-	const [likeCount, setLikeCount] = useState(post.likes_count);
+	const { toggleLikePost } = usePostStore();
+	const [isLiking, setIsLiking] = useState(false);
+	const navigate = useNavigate();
 
-	const handleLikePost = async () => {
+	const handleLike = async (e) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		setIsLiking(true);
+
 		try {
-			const { like } = await toggleLike(post.post_id);
-			setIsLiked(like.liked);
-			setLikeCount(like.likes_count);
-			// eslint-disable-next-line no-unused-vars
+			await toggleLikePost(post.post_id);
 		} catch (error) {
-			return;
+			console.error(error);
+		} finally {
+			setIsLiking(false);
 		}
 	};
 
+	const handleProfileClick = (e) => {
+		e.preventDefault();
+		e.stopPropagation();
+		navigate(`/profile/${post.user_id}`);
+	};
+
+	const handlePostClick = () => {
+		navigate(`/posts/${post.post_id}`);
+	};
+
 	return (
-		<div className="w-full">
-			<Link to={`/posts/${post.post_id}`}>
-				<div className="flex justify-between m-2">
-					<Link to={`/profile/${post.user_id}`} className="flex items-center gap-2">
-						<div>
-							<img src={post.avatar_url} alt="" className="size-11 rounded-full" />
-						</div>
-						<div>
-							<p className="text-base/tight font-bold">{post.display_name}</p>
-							<p className="text-sm/tight text-gray-700">@{post.username}</p>
-						</div>
-					</Link>
+		<div className="w-full hover:bg-gray-50 transition-colors" onClick={handlePostClick}>
+			<div className="flex justify-between m-2">
+				<div onClick={handleProfileClick} className="flex items-center gap-2 cursor-pointer">
+					<img src={post.avatar_url} alt={post.username} className="size-11 rounded-full object-cover" />
 					<div>
-						<p className="text-xs">{timeAgo(post.created_at)}</p>
+						<p className="text-base/tight font-bold">{post.display_name}</p>
+						<p className="text-sm/tight text-gray-700">@{post.username}</p>
 					</div>
 				</div>
+				<p className="text-xs text-gray-500">{timeAgo(post.created_at)}</p>
+			</div>
 
-				<div>
-					<p className="mx-2 text-base/5">{post.content}</p>
-					<img src={post.image_url} alt="" className="m-2" />
-				</div>
-			</Link>
+			<div className="mx-2 mb-2">
+				<p className="text-base leading-snug whitespace-pre-wrap wrap-break-word">{post.content}</p>
+				{post.image_url && (
+					<img src={post.image_url} alt={post.username} className="my-2 rounded-lg w-full object-cover max-h-96" />
+				)}
+			</div>
 
-			<div className="flex gap-4 m-2">
-				<div className="flex items-end gap-1">
-					<div onClick={handleLikePost} className="cursor-pointer">
-						<ThumbsUp className={`size-5 ${isLiked ? 'text-blue-500' : 'text-black'}`} />
-					</div>
-					<p className="text-sm">{likeCount}</p>
-				</div>
-				<div className="flex items-end gap-1">
+			<div className="flex gap-4 mx-2 mb-2 text-gray-600">
+				<button
+					onClick={handleLike}
+					disabled={isLiking}
+					className={`flex items-center gap-1.5 group cursor-pointer ${
+						post.like_id ? 'text-blue-500' : 'hover:text-blue-500 transition-colors disabled:opacity-50'
+					}`}
+				>
+					<ThumbsUp
+						className={`size-5 ${post.like_id ? 'fill-current' : 'group-hover:scale-110 transition-transform'}`}
+					/>
+					<span className="text-sm font-medium">{post.likes_count}</span>
+				</button>
+
+				<div onClick={handlePostClick} className="flex items-center gap-1.5 hover:text-green-500 transition-colors cursor-pointer">
 					<MessageSquareMore className="size-5" />
-					<p className="text-sm">{post.comments_count}</p>
+					<p className="text-sm font-medium">{post.comments_count}</p>
 				</div>
 			</div>
 		</div>
