@@ -16,7 +16,7 @@ const Post = () => {
 		window.scrollTo(0, 0);
 
 		if (id) loadPost(id);
-	}, [id, loadPost]);
+	}, [id]);
 
 	const handleLike = async () => {
 		setIsLiking(true);

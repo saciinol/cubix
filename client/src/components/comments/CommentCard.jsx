@@ -24,7 +24,7 @@ const CommentCard = ({ comment, setReplyTo, setCommentData }) => {
 	return (
 		<div className="w-full py-1">
 			<div className="flex items-start gap-2">
-				<div onClick={handleProfileClick} className="shrink-0">
+				<div onClick={handleProfileClick} className="shrink-0 cursor-pointer">
 					<img
 						src={comment.avatar_url || '/default-avatar.png'}
 						alt={comment.username}
@@ -33,7 +33,7 @@ const CommentCard = ({ comment, setReplyTo, setCommentData }) => {
 				</div>
 
 				<div className="flex-1 min-w-0">
-					<div onClick={handleProfileClick} className="flex items-center gap-1 flex-wrap">
+					<div onClick={handleProfileClick} className="flex items-center gap-1 flex-wrap cursor-pointer">
 						<p className="text-sm font-semibold text-gray-900">{comment.display_name || comment.username}</p>
 						<p className="text-xs text-gray-500">@{comment.username}</p>
 						<span className="text-xs text-gray-400">·</span>

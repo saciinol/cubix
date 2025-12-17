@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Loader2, SendHorizonal } from 'lucide-react';
 
-import useCommentStore from '../../store/commentStore';
+import { useCommentStore } from '../../store';
 import CommentThread from './CommentThread';
 import Button from '../ui/Button';
 
@@ -19,7 +19,7 @@ const Comments = () => {
 		if (id) {
 			loadComments(id);
 		}
-	}, [id, loadComments]);
+	}, [id]);
 
 	const comments = getComments(id);
 

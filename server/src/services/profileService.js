@@ -44,7 +44,7 @@ export const updateUserProfile = async (userId, requestingUserId, updates) => {
       sanitizedUpdates.website = updates.website;
    }
 
-   const updatedProfile = await profileModel.updateProfile(userId, sanitizedUpdates);
+   await profileModel.updateProfile(userId, sanitizedUpdates);
 
    const fullProfile = await profileModel.getProfileByUserId(userId);
 

@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { loginUser, registerUser, validateToken } from '../services/authService';
+import useProfileStore from './profileStore';
 
 const useAuthStore = create(
 	persist(
@@ -79,6 +80,8 @@ const useAuthStore = create(
 					token: null,
 					isAuthenticated: false,
 				});
+
+        useProfileStore.getState().clearAllProfiles();
 			},
 		}),
 		{

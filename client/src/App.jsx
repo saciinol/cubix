@@ -7,7 +7,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Layout from './components/Layout';
 import Feed from './pages/Feed';
-import Post from './components/feed/Post';
+import Post from './components/post/Post';
 import Profile from './pages/Profile';
 
 const ProtectedRoute = ({ children }) => {

@@ -15,7 +15,7 @@ const useCommentStore = create((set, get) => ({
 	// getters
 	getComments: (postId) => {
 		const { comments } = get();
-		return comments[postId] || [];
+		return comments[postId] || null;
 	},
 
 	// setters

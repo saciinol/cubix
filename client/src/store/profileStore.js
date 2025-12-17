@@ -1,46 +1,107 @@
 import { create } from 'zustand';
-import {
-	getMyProfile as getMyProfileAPI,
-	getProfile as getProfileAPI,
-	updateProfile as updateProfileAPI,
-} from '../services/profileService';
+import { getProfile as getProfileAPI, updateProfile as updateProfileAPI } from '../services/profileService';
 
 const useProfileStore = create((set, get) => ({
 	// state
 	profiles: {},
+	loadingIds: new Set(),
 	isLoading: false,
 	isSubmitting: false,
 	error: null,
 
 	getProfile: (userId) => {
 		const { profiles } = get();
-		return profiles[userId] || [];
+		return profiles[userId] || null;
+	},
+
+	isProfileLoading: (userId) => {
+		return get().loadingIds.has(userId);
 	},
 
 	setProfile: (userId, profile) => {
-		const { profiles } = get();
-		set({
+		set((state) => ({
 			profiles: {
-				...profiles,
+				...state.profiles,
 				[userId]: profile,
 			},
-		});
+		}));
 	},
 
 	loadProfile: async (userId) => {
-		set({ isLoading: true, error: null });
+		const { profiles, loadingIds } = get();
+
+		if (profiles[userId]) {
+			return profiles[userId];
+		}
+
+		if (loadingIds.has(userId)) {
+			return;
+		}
+
+		set((state) => ({
+			isLoading: true,
+			loadingIds: new Set(state.loadingIds).add(userId),
+		}));
 
 		try {
 			const { profile } = await getProfileAPI(userId);
-			get().setProfile(userId, profile);
-			set({ isLoading: false });
+
+			set((state) => ({
+				profiles: {
+					...state.profiles,
+					[userId]: profile,
+				},
+				isLoading: state.loadingIds.size === 1 ? false : true,
+				loadingIds: new Set([...state.loadingIds].filter((id) => id !== userId)),
+				error: null,
+			}));
+
+			return profile;
+		} catch (error) {
+			set((state) => ({
+				error: error.message || 'Failed to load profile',
+				isLoading: state.loadingIds.size === 1 ? false : true,
+				loadingIds: new Set([...state.loadingIds].filter((id) => id !== userId)),
+			}));
+			throw error;
+		}
+	},
+
+	updateProfile: async (userId, updates) => {
+		set({ isSubmitting: true, error: null });
+
+		try {
+			const { profile } = await updateProfileAPI(userId, updates);
+
+			set((state) => ({
+				profiles: {
+					...state.profiles,
+					[userId]: profile,
+				},
+				isSubmitting: false,
+				error: null,
+			}));
+
+			return profile;
 		} catch (error) {
 			set({
 				error: error.message,
-				isLoading: false,
+				isSubmitting: false,
 			});
+			throw error;
 		}
 	},
+
+	clearError: () => set({ error: null }),
+
+	// clearProfile: (userId) => {
+	// 	set((state) => {
+	// 		const { [userId]: removed, ...rest } = state.profiles;
+	// 		return { profiles: rest };
+	// 	});
+	// },
+
+	clearAllProfiles: () => set({ profiles: {}, error: null }),
 }));
 
 export default useProfileStore;
