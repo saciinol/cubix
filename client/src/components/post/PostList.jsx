@@ -67,7 +67,7 @@ const PostList = () => {
 						<Button
 							disabled={!postData.content.trim() || isSubmitting}
 							type="submit"
-							className="h-8! bg-white! border-0! shadow-md"
+							className="h-8! bg-white! hover:text-black! border-0! shadow-md"
 							variant="transparent"
 						>
 							Post

@@ -2,33 +2,21 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { useAuthStore, useProfileStore } from '../store';
+import Button from '../components/ui/Button';
+import EditProfile from '../components/profile/EditProfile';
 
 const Profile = () => {
 	const { id } = useParams();
 	const { user } = useAuthStore();
-	const { getProfile, loadProfile, isProfileLoading, updateProfile, isSubmitting, error } = useProfileStore();
-	const [profileData, setProfileData] = useState({});
+	const { getProfile, loadProfile, isProfileLoading, error } = useProfileStore();
+	const [editProfile, setEditProfile] = useState(false);
 
 	useEffect(() => {
 		if (id) {
 			loadProfile(id);
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [id]);
-
-	const handleChange = (e) => {
-		const { name, value } = e.target;
-
-		setProfileData((prev) => ({
-			...prev,
-			[name]: value,
-		}));
-	};
-
-	const handleSubmit = (e) => {
-		e.preventDefault();
-
-		if (id !== user.user_id) return;
-	};
 
 	const profile = getProfile(id);
 	const loading = isProfileLoading(id);
@@ -59,6 +47,19 @@ const Profile = () => {
 					<img src={profile.avatar_url} alt="" className="rounded-full" />
 				</div>
 			</div>
+
+			{id == user.user_id && (
+				<div className="flex justify-end" onClick={() => setEditProfile(!editProfile)}>
+					<Button
+						variant="transparent"
+						className="absolute -mt-10 mr-2 lg:mr-0 md:-mt-16 text-sm h-8! px-3! md:text-base md:h-10! md:px-4!"
+					>
+						Edit Profile
+					</Button>
+				</div>
+			)}
+
+			{editProfile && <EditProfile />}
 
 			<div className="flex flex-col items-center mb-2">
 				<p className="font-bold text-base">{profile.display_name}</p>
