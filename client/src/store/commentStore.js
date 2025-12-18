@@ -15,18 +15,17 @@ const useCommentStore = create((set, get) => ({
 	// getters
 	getComments: (postId) => {
 		const { comments } = get();
-		return comments[postId] || null;
+		return comments[postId] || [];
 	},
 
 	// setters
 	setComments: (postId, postComments) => {
-		const { comments } = get();
-		set({
+		set((state) => ({
 			comments: {
-				...comments,
+				...state.comments,
 				[postId]: postComments,
 			},
-		});
+		}));
 	},
 
 	loadComments: async (postId) => {
@@ -34,8 +33,13 @@ const useCommentStore = create((set, get) => ({
 
 		try {
 			const { comments } = await getCommentsAPI(postId);
-			get().setComments(postId, comments);
-			set({ isLoading: false });
+			set((state) => ({
+				comments: {
+					...state.comments,
+					[postId]: comments,
+				},
+				isLoading: false,
+			}));
 		} catch (error) {
 			set({
 				error: error.message,
@@ -55,12 +59,13 @@ const useCommentStore = create((set, get) => ({
 
 			// update comments
 			const currentPostComments = get().getComments(postId);
-			const updatedPostComments = [...currentPostComments, comment];
-			get().setComments(postId, updatedPostComments);
-
-			set({
+			set((state) => ({
+				comments: {
+					...state.comments,
+					[postId]: [...currentPostComments, comment],
+				},
 				isSubmitting: false,
-			});
+			}));
 
 			return comment;
 		} catch (error) {
@@ -80,10 +85,13 @@ const useCommentStore = create((set, get) => ({
 
 			// remove from post comments
 			const currentPostComments = get().getComments(postId);
-			const updatedPostComments = currentPostComments.filter((c) => c.comment_id !== commentId);
-			get().setComments(postId, updatedPostComments);
-
-			set({ isSubmitting: false });
+			set((state) => ({
+				comments: {
+					...state.comments,
+					[postId]: currentPostComments.filter((c) => c.comment_id !== commentId),
+				},
+				isSubmitting: false,
+			}));
 		} catch (error) {
 			set({
 				error: error.message,

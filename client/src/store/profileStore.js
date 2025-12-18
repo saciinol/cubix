@@ -11,20 +11,11 @@ const useProfileStore = create((set, get) => ({
 
 	getProfile: (userId) => {
 		const { profiles } = get();
-		return profiles[userId] || null;
+		return profiles[userId] || [];
 	},
 
 	isProfileLoading: (userId) => {
 		return get().loadingIds.has(userId);
-	},
-
-	setProfile: (userId, profile) => {
-		set((state) => ({
-			profiles: {
-				...state.profiles,
-				[userId]: profile,
-			},
-		}));
 	},
 
 	loadProfile: async (userId) => {

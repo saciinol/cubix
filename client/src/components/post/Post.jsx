@@ -16,6 +16,7 @@ const Post = () => {
 		window.scrollTo(0, 0);
 
 		if (id) loadPost(id);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [id]);
 
 	const handleLike = async () => {

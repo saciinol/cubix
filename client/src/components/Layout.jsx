@@ -1,20 +1,42 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { Box, LogOut, User } from 'lucide-react';
+import { ArrowLeft, Box, LogOut, User } from 'lucide-react';
 import { useAuthStore } from '../store';
 import Dropdown, { DropdownItem } from './ui/Dropdown';
 
-const Layout = ({ children }) => {
+const Layout = ({ children, ...props }) => {
 	const { user, logout } = useAuthStore();
 	const navigate = useNavigate();
 
-  const handleProfile = () => {
-    navigate(`/profile/${user.user_id}`);
-  }
+	const handleProfile = () => {
+		navigate(`/profile/${user.user_id}`);
+	};
 
 	const handleLogout = () => {
 		logout();
 		navigate('/login');
 	};
+
+	const handleGoBack = () => {
+		navigate(-1);
+	};
+
+	if (props.post || props.editProfile) {
+		return (
+			<div className="min-h-screen bg-muted">
+				<header className={`sticky top-0 z-40 w-full bg-white shadow-sm`}>
+					<nav className="max-w-7xl mx-auto flex items-center p-1.5">
+						<div className="py-1.5 px-2 flex items-center gap-3">
+							<ArrowLeft className="size-5 cursor-pointer" onClick={handleGoBack} />
+							{props.post && <p className="font-bold text-xl">Post</p>}
+							{props.editProfile && <p className="font-bold text-xl">Edit Profile</p>}
+						</div>
+					</nav>
+				</header>
+
+				<main className="pb-20 lg:pb-4 min-h-[calc(100vh-64px)]">{children}</main>
+			</div>
+		);
+	}
 
 	return (
 		<div className="min-h-screen bg-muted">

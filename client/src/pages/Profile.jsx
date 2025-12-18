@@ -1,15 +1,15 @@
 import { useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import {useNavigate} from 'react-router-dom'
 import { Loader2 } from 'lucide-react';
 import { useAuthStore, useProfileStore } from '../store';
 import Button from '../components/ui/Button';
-import EditProfile from '../components/profile/EditProfile';
 
 const Profile = () => {
 	const { id } = useParams();
 	const { user } = useAuthStore();
 	const { getProfile, loadProfile, isProfileLoading, error } = useProfileStore();
-	const [editProfile, setEditProfile] = useState(false);
+  const navigate = useNavigate();
 
 	useEffect(() => {
 		if (id) {
@@ -17,6 +17,10 @@ const Profile = () => {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [id]);
+
+  const handleEditProfile = () => {
+    navigate(`/profile/${id}/edit`);
+  }
 
 	const profile = getProfile(id);
 	const loading = isProfileLoading(id);
@@ -49,7 +53,7 @@ const Profile = () => {
 			</div>
 
 			{id == user.user_id && (
-				<div className="flex justify-end" onClick={() => setEditProfile(!editProfile)}>
+				<div className="flex justify-end" onClick={handleEditProfile}>
 					<Button
 						variant="transparent"
 						className="absolute -mt-10 mr-2 lg:mr-0 md:-mt-16 text-sm h-8! px-3! md:text-base md:h-10! md:px-4!"
@@ -58,8 +62,6 @@ const Profile = () => {
 					</Button>
 				</div>
 			)}
-
-			{editProfile && <EditProfile />}
 
 			<div className="flex flex-col items-center mb-2">
 				<p className="font-bold text-base">{profile.display_name}</p>

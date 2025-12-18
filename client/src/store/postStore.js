@@ -27,17 +27,6 @@ const usePostStore = create((set, get) => ({
 		return userPosts[userId] || [];
 	},
 
-	// setters
-	setUserPosts: (userId, posts) => {
-		const { userPosts } = get();
-		set({
-			userPosts: {
-				...userPosts,
-				[userId]: posts,
-			},
-		});
-	},
-
 	// helper
 	updatePostInAllCollections: (postId, updateFn) => {
 		set((state) => {
@@ -108,8 +97,13 @@ const usePostStore = create((set, get) => ({
 
 		try {
 			const { posts } = await getUserPostsAPI(userId);
-			get().setUserPosts(userId, posts);
-			set({ isLoading: false });
+			set((state) => ({
+				userPosts: {
+					...state.userPosts,
+					[userId]: posts,
+				},
+				isLoading: false,
+			}));
 		} catch (error) {
 			set({
 				error: error.message,
@@ -179,21 +173,17 @@ const usePostStore = create((set, get) => ({
 		try {
 			const { post } = await createPostAPI({ content, image_url });
 
-			// update user posts
+			// update from user, feed, all posts
 			const currentUserPosts = get().getUserPosts(userId);
-			const updatedUserPosts = [post, ...currentUserPosts];
-			get().setUserPosts(userId, updatedUserPosts);
-
-			// update all and feed posts
-			const { allPosts, feedPosts } = get();
-
-			set({
-				allPosts: [post, ...allPosts],
-				feedPosts: [post, ...feedPosts],
+			set((state) => ({
+				userPosts: {
+					...state.userPosts,
+					[userId]: [post, ...currentUserPosts],
+				},
+				allPosts: [post, ...state.allPosts],
+				feedPosts: [post, ...state.feedPosts],
 				isSubmitting: false,
-			});
-
-			//update feed posts
+			}));
 
 			return post;
 		} catch (error) {
@@ -211,24 +201,17 @@ const usePostStore = create((set, get) => ({
 		try {
 			await deletePostAPI(postId);
 
-			// remove from user posts
+			// remove from user, feed, all posts
 			const currentUserPosts = get().getUserPosts(userId);
-			const updatedUserPosts = currentUserPosts.filter((p) => p.post_id !== postId);
-			get().setUserPosts(userId, updatedUserPosts);
-
-			const { allPosts, feedPosts } = get();
-
-			// remove from all posts
-			const updatedAllPosts = allPosts.filter((p) => p.post_id !== postId);
-
-			// remove from feed posts
-			const updatedFeedPosts = feedPosts.filter((p) => p.post_id !== postId);
-
-			set({
-				allPosts: updatedAllPosts,
-				feedPosts: updatedFeedPosts,
+			set((state) => ({
+				userPosts: {
+					...state.userPosts,
+					[userId]: currentUserPosts.filter((p) => p.post_id !== postId),
+				},
+				allPosts: state.allPosts.filter((p) => p.post_id !== postId),
+				feedPosts: state.feedPosts.filter((p) => p.post_id !== postId),
 				isSubmitting: false,
-			});
+			}));
 		} catch (error) {
 			set({
 				error: error.message,

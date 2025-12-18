@@ -9,6 +9,7 @@ import Layout from './components/Layout';
 import Feed from './pages/Feed';
 import Post from './components/post/Post';
 import Profile from './pages/Profile';
+import EditProfile from './components/profile/EditProfile';
 
 const ProtectedRoute = ({ children }) => {
 	const { isAuthenticated } = useAuthStore();
@@ -18,14 +19,14 @@ const ProtectedRoute = ({ children }) => {
 		return <Navigate to="/login" state={{ from: location }} replace />;
 	}
 
-	return <Layout>{children}</Layout>;
+	return children;
 };
 
 const PublicRoute = ({ children }) => {
 	const { isAuthenticated } = useAuthStore();
 
 	if (isAuthenticated) {
-		return <Navigate to="/feed" replace />;
+		return <Navigate to="/posts/feed" replace />;
 	}
 
 	return children;
@@ -72,7 +73,9 @@ function App() {
 					path="/posts/feed"
 					element={
 						<ProtectedRoute>
-							<Feed />
+							<Layout>
+								<Feed />
+							</Layout>
 						</ProtectedRoute>
 					}
 				/>
@@ -81,7 +84,9 @@ function App() {
 					path="/posts/:id"
 					element={
 						<ProtectedRoute>
-							<Post />
+							<Layout post="post">
+								<Post />
+							</Layout>
 						</ProtectedRoute>
 					}
 				/>
@@ -90,7 +95,20 @@ function App() {
 					path="/profile/:id"
 					element={
 						<ProtectedRoute>
-							<Profile />
+							<Layout>
+								<Profile />
+							</Layout>
+						</ProtectedRoute>
+					}
+				/>
+
+				<Route
+					path="/profile/:id/edit"
+					element={
+						<ProtectedRoute>
+							<Layout editProfile="editProfile">
+								<EditProfile />
+							</Layout>
 						</ProtectedRoute>
 					}
 				/>
