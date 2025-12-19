@@ -1,46 +1,18 @@
-import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Box, Loader2, Eye, EyeOff } from 'lucide-react';
-
+import { Box } from 'lucide-react';
 import { useAuthStore } from '../store';
-import Button from '../components/ui/Button';
-import Input from '../components/ui/Input';
+import LoginForm from '../components/loginRegister/LoginForm';
 
 const Login = () => {
-	const [formData, setFormData] = useState({
-		email: '',
-		password: '',
-	});
-   const [showPassword, setShowPassword] = useState(false);
-	const [validationErrors, setValidationErrors] = useState('');
-
 	const { login, isLoading } = useAuthStore();
 	const navigate = useNavigate();
 	const location = useLocation();
 
-	const from = location.state?.from?.pathname || '/feed';
+	const from = location.state?.from?.pathname || '/posts/feed';
 
-	const handleChange = (e) => {
-		const { name, value } = e.target;
-
-		setValidationErrors('');
-
-		setFormData({
-			...formData,
-			[name]: value,
-		});
-	};
-
-	const handleSubmit = async (e) => {
-		e.preventDefault();
-
-		try {
-			await login(formData.email.trim(), formData.password);
-			navigate(from, { replace: true });
-			// eslint-disable-next-line no-unused-vars
-		} catch (error) {
-			setValidationErrors('Invalid email or password.');
-		}
+	const handleLogin = async (email, password) => {
+		await login(email, password);
+		navigate(from, { replace: true });
 	};
 
 	return (
@@ -55,53 +27,7 @@ const Login = () => {
 					</div>
 
 					<div className="flex w-full flex-col gap-8">
-						<form onSubmit={handleSubmit} className="flex flex-col gap-4">
-							<div className="flex flex-col gap-2">
-								<Input
-									type="email"
-									name="email"
-									value={formData.email}
-									onChange={handleChange}
-									className={`${validationErrors ? 'border-red-600 focus:border-red-600' : ''}`}
-									placeholder="Email"
-									disabled={isLoading}
-									required
-								/>
-							</div>
-
-							<div className="flex flex-col">
-								<div className="flex items-center justify-end">
-									<Input
-										type={showPassword ? "text" : "password"}
-										name="password"
-										value={formData.password}
-										onChange={handleChange}
-										className={`pr-12 ${validationErrors ? 'border-red-600 focus:border-red-600' : ''}`}
-										placeholder="Password"
-										disabled={isLoading}
-										required
-									/>
-
-                           <div onClick={() => setShowPassword(!showPassword)} className='absolute mr-2 cursor-pointer hover:bg-gray-100 rounded-full duration p-2 select-none'>
-                           {showPassword ? (
-									   <Eye className="size-4" />
-                           ) : (
-									   <EyeOff className="size-4" />
-                           )}
-                           </div>
-								</div>
-
-								<p className={`ml-1 text-red-600 text-sm ${validationErrors ? 'opacity-100' : 'opacity-0'}`}>
-									{validationErrors ? validationErrors : '&nbsp;'}
-								</p>
-							</div>
-
-							<div className="flex flex-col gap-2">
-								<Button type="submit" className="w-full">
-									{isLoading ? <Loader2 className="size-6 animate-spin" /> : 'Login'}
-								</Button>
-							</div>
-						</form>
+						<LoginForm onSubmit={handleLogin} isLoading={isLoading} />
 					</div>
 
 					<div className="text-gray-500 flex justify-center gap-1 text-base">

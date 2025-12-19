@@ -1,12 +1,16 @@
 import { useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 
-import { usePostStore } from '../../store';
+// import { usePostStore } from '../../store';
 import PostCard from './PostCard';
 import CreatePost from './CreatePost';
+import { useFeedPosts, useIsLoading, usePostActions } from '../../store/postStore';
 
 const PostList = () => {
-	const { feedPosts, isLoading, loadFeedPosts } = usePostStore();
+	// const { feedPosts, isLoading, loadFeedPosts } = usePostStore();
+	const feedPosts = useFeedPosts();
+	const isLoading = useIsLoading();
+	const { loadFeedPosts } = usePostActions();
 
 	useEffect(() => {
 		loadFeedPosts();
@@ -15,7 +19,7 @@ const PostList = () => {
 
 	return (
 		<div className="max-w-2xl mx-auto">
-      <CreatePost />
+			<CreatePost />
 
 			<div className="flex flex-col divide-y divide-gray-300">
 				{isLoading ? (

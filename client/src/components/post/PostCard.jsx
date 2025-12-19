@@ -1,11 +1,14 @@
 import { MessageSquareMore, ThumbsUp, User } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { usePostStore } from '../../store';
+// import { usePostStore } from '../../store';
 import timeAgo from '../timeAgo';
+import { usePostActions } from '../../store/postStore';
 
 const PostCard = ({ post }) => {
-	const { toggleLikePost } = usePostStore();
+	// const { toggleLikePost } = usePostStore();
+	const { toggleLikePost } = usePostActions();
+
 	const [isLiking, setIsLiking] = useState(false);
 	const navigate = useNavigate();
 
@@ -38,9 +41,13 @@ const PostCard = ({ post }) => {
 		<div className="w-full hover:bg-gray-50 transition-colors" onClick={handlePostClick}>
 			<div className="flex justify-between m-2">
 				<div onClick={handleProfileClick} className="flex items-center gap-2 cursor-pointer">
-					<img src={post.avatar_url} alt={post.username} className="size-11 rounded-full object-cover" />
+					{post.avatar_url ? (
+            <img src={post.avatar_url} alt={post.username} className="size-11 rounded-full object-cover" />
+          ) : (
+            <User className="bg-blue-300 size-11 rounded-full object-cover" />
+          )}
 					<div>
-						<p className="text-base/tight font-bold">{post.display_name}</p>
+						<p className="text-base/tight font-bold">{post.display_name || post.username}</p>
 						<p className="text-sm/tight text-gray-700">@{post.username}</p>
 					</div>
 				</div>
@@ -68,7 +75,10 @@ const PostCard = ({ post }) => {
 					<span className="text-sm font-medium">{post.likes_count}</span>
 				</button>
 
-				<div onClick={handlePostClick} className="flex items-center gap-1.5 hover:text-green-500 transition-colors cursor-pointer">
+				<div
+					onClick={handlePostClick}
+					className="flex items-center gap-1.5 hover:text-green-500 transition-colors cursor-pointer"
+				>
 					<MessageSquareMore className="size-5" />
 					<p className="text-sm font-medium">{post.comments_count}</p>
 				</div>

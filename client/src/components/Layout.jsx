@@ -1,11 +1,22 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Box, LogOut, User } from 'lucide-react';
-import { useAuthStore } from '../store';
+import { useAuthStore, useProfileStore } from '../store';
 import Dropdown, { DropdownItem } from './ui/Dropdown';
+import { useEffect } from 'react';
 
 const Layout = ({ children, ...props }) => {
 	const { user, logout } = useAuthStore();
+	const { getProfile, loadProfile } = useProfileStore();
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (user.user_id) {
+			loadProfile(user.user_id);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [user.user_id]);
+
+	const profile = getProfile(user.user_id);
 
 	const handleProfile = () => {
 		navigate(`/profile/${user.user_id}`);
@@ -25,10 +36,14 @@ const Layout = ({ children, ...props }) => {
 			<div className="min-h-screen bg-muted">
 				<header className={`sticky top-0 z-40 w-full bg-white shadow-sm`}>
 					<nav className="max-w-7xl mx-auto flex items-center p-1.5">
-						<div className="py-1.5 px-2 flex items-center gap-3">
-							<ArrowLeft className="size-5 cursor-pointer" onClick={handleGoBack} />
-							{props.post && <p className="font-bold text-xl">Post</p>}
-							{props.editProfile && <p className="font-bold text-xl">Edit Profile</p>}
+						<div className="w-full py-1.5 px-2 flex justify-between items-center">
+							<div className="flex items-center gap-3">
+								<ArrowLeft className="size-5 cursor-pointer" onClick={handleGoBack} />
+								{props.post && <p className="font-bold text-xl">Post</p>}
+								{props.editProfile && <p className="font-bold text-xl">Edit Profile</p>}
+							</div>
+
+							<button>Save</button>
 						</div>
 					</nav>
 				</header>
@@ -51,7 +66,15 @@ const Layout = ({ children, ...props }) => {
 					</Link>
 
 					<div className="py-1 px-2 flex items-center justify-center gap-1 cursor-pointer">
-						<Dropdown trigger={<User className="bg-blue-300 size-8 rounded-full" />}>
+						<Dropdown
+							trigger={
+								profile.avatar_url ? (
+									<img src={profile.avatar_url} alt={profile.username} className="size-8 rounded-full object-cover" />
+								) : (
+									<User className="bg-blue-300 size-8 rounded-full object-cover" />
+								)
+							}
+						>
 							<DropdownItem onClick={handleProfile}>
 								<User className="size-5" />
 								<p className="text-sm/1">Profile</p>

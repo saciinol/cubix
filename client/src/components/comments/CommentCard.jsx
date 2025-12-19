@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import timeAgo from '../timeAgo';
+import { User } from 'lucide-react';
 
 const CommentCard = ({ comment, setReplyTo, setCommentData }) => {
 	const navigate = useNavigate();
@@ -25,11 +26,15 @@ const CommentCard = ({ comment, setReplyTo, setCommentData }) => {
 		<div className="w-full py-1">
 			<div className="flex items-start gap-2">
 				<div onClick={handleProfileClick} className="shrink-0 cursor-pointer">
-					<img
-						src={comment.avatar_url || '/default-avatar.png'}
-						alt={comment.username}
-						className="rounded-full w-8 h-8 object-cover"
-					/>
+					{comment.avatar_url ? (
+						<img
+							src={comment.avatar_url || '/default-avatar.png'}
+							alt={comment.username}
+							className="rounded-full size-8 object-cover"
+						/>
+					) : (
+						<User className="bg-blue-300 size-8 rounded-full object-cover" />
+					)}
 				</div>
 
 				<div className="flex-1 min-w-0">

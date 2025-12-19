@@ -23,14 +23,3 @@ export const updateProfile = async (req, res, next) => {
 		next(error);
 	}
 };
-
-export const getMyProfile = async (req, res, next) => {
-	try {
-		const userId = req.user.userId;
-
-		const profile = await profileService.getUserProfile(userId);
-		res.json({ profile });
-	} catch (error) {
-		next(error);
-	}
-};

@@ -1,10 +1,5 @@
 import api from './api';
 
-export const getMyProfile = async () => {
-	const response = await api.get('/profile/me');
-	return response.data;
-};
-
 export const updateProfile = async (userId, updates) => {
 	const response = await api.put(`/profile/${userId}`, updates);
 	return response.data;
