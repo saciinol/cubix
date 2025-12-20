@@ -2,7 +2,7 @@ import { MessageSquareMore, ThumbsUp, User } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // import { usePostStore } from '../../store';
-import timeAgo from '../timeAgo';
+import timeAgo from '../utils/timeAgo';
 import { usePostActions } from '../../store/postStore';
 
 const PostCard = ({ post }) => {
@@ -42,10 +42,10 @@ const PostCard = ({ post }) => {
 			<div className="flex justify-between m-2">
 				<div onClick={handleProfileClick} className="flex items-center gap-2 cursor-pointer">
 					{post.avatar_url ? (
-            <img src={post.avatar_url} alt={post.username} className="size-11 rounded-full object-cover" />
-          ) : (
-            <User className="bg-blue-300 size-11 rounded-full object-cover" />
-          )}
+						<img src={post.avatar_url} alt={post.username} className="size-11 rounded-full object-cover" />
+					) : (
+						<User className="bg-blue-300 size-11 rounded-full object-cover" />
+					)}
 					<div>
 						<p className="text-base/tight font-bold">{post.display_name || post.username}</p>
 						<p className="text-sm/tight text-gray-700">@{post.username}</p>

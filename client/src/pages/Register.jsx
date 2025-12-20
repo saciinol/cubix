@@ -10,7 +10,7 @@ const Register = () => {
 
 	const handleRegister = async (formData) => {
 		await register(formData);
-		navigate('/posts/feed');
+		navigate('/');
 	};
 
 	return (

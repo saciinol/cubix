@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 // import { usePostStore } from '../../store';
 import Comments from '../comments/Comments';
-import timeAgo from '../timeAgo';
+import timeAgo from '../utils/timeAgo';
 import { useCurrentPosts, useIsLoading, usePostActions } from '../../store/postStore';
 import LikeButton from './LikeButton';
 

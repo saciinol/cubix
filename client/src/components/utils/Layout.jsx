@@ -1,25 +1,27 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Box, LogOut, User } from 'lucide-react';
-import { useAuthStore, useProfileStore } from '../store';
-import Dropdown, { DropdownItem } from './ui/Dropdown';
+import { useAuthStore, useProfileStore } from '../../store';
+import Dropdown, { DropdownItem } from '../ui/Dropdown';
 import { useEffect } from 'react';
+import useFormContext from './useFormContext';
 
 const Layout = ({ children, ...props }) => {
 	const { user, logout } = useAuthStore();
 	const { getProfile, loadProfile } = useProfileStore();
+	const { onSubmit, isSubmitting } = useFormContext();
 	const navigate = useNavigate();
 
+	const profile = getProfile(user?.user_id || user?.id);
+
 	useEffect(() => {
-		if (user.user_id) {
-			loadProfile(user.user_id);
+		if (user?.user_id || user?.id) {
+			loadProfile(user?.user_id || user?.id);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [user.user_id]);
-
-	const profile = getProfile(user.user_id);
+	}, [user?.user_id || user?.id]);
 
 	const handleProfile = () => {
-		navigate(`/profile/${user.user_id}`);
+		navigate(`/profile/${user?.user_id || user?.id}`);
 	};
 
 	const handleLogout = () => {
@@ -29,6 +31,12 @@ const Layout = ({ children, ...props }) => {
 
 	const handleGoBack = () => {
 		navigate(-1);
+	};
+
+	const handleSave = () => {
+		if (onSubmit) {
+			onSubmit();
+		}
 	};
 
 	if (props.post || props.editProfile) {
@@ -43,7 +51,13 @@ const Layout = ({ children, ...props }) => {
 								{props.editProfile && <p className="font-bold text-xl">Edit Profile</p>}
 							</div>
 
-							<button>Save</button>
+							<button
+								onClick={handleSave}
+								disabled={isSubmitting}
+								className="cursor-pointer font-bold text-lg hover:text-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+							>
+								Save
+							</button>
 						</div>
 					</nav>
 				</header>
@@ -58,7 +72,7 @@ const Layout = ({ children, ...props }) => {
 			<header className={`sticky top-0 z-40 w-full bg-white shadow-sm`}>
 				<nav className="max-w-7xl mx-auto flex justify-between items-center p-1.5">
 					<Link
-						to="/posts/feed"
+						to="/"
 						className="py-1 px-2 flex items-center justify-center gap-1 hover:bg-gray-100 rounded-md duration-100"
 					>
 						<Box className="size-7" />
@@ -69,7 +83,7 @@ const Layout = ({ children, ...props }) => {
 						<Dropdown
 							trigger={
 								profile.avatar_url ? (
-									<img src={profile.avatar_url} alt={profile.username} className="size-8 rounded-full object-cover" />
+									<img src={profile?.avatar_url} alt={profile?.username} className="size-8 rounded-full object-cover" />
 								) : (
 									<User className="bg-blue-300 size-8 rounded-full object-cover" />
 								)

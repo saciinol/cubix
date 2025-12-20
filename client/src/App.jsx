@@ -5,11 +5,12 @@ import { Loader2 } from 'lucide-react';
 import { useAuthStore } from './store';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Layout from './components/Layout';
+import Layout from './components/utils/Layout';
 import Feed from './pages/Feed';
 import Post from './components/post/Post';
 import Profile from './pages/Profile';
 import EditProfile from './components/profile/EditProfile';
+import FormContextProvider from './components/utils/FormContextProvider';
 
 const ProtectedRoute = ({ children }) => {
 	const { isAuthenticated } = useAuthStore();
@@ -26,7 +27,7 @@ const PublicRoute = ({ children }) => {
 	const { isAuthenticated } = useAuthStore();
 
 	if (isAuthenticated) {
-		return <Navigate to="/posts/feed" replace />;
+		return <Navigate to="/" replace />;
 	}
 
 	return children;
@@ -50,69 +51,71 @@ function App() {
 
 	return (
 		<Router>
-			<Routes>
-				<Route
-					path="/login"
-					element={
-						<PublicRoute>
-							<Login />
-						</PublicRoute>
-					}
-				/>
+			<FormContextProvider>
+				<Routes>
+					<Route
+						path="/login"
+						element={
+							<PublicRoute>
+								<Login />
+							</PublicRoute>
+						}
+					/>
 
-				<Route
-					path="/register"
-					element={
-						<PublicRoute>
-							<Register />
-						</PublicRoute>
-					}
-				/>
+					<Route
+						path="/register"
+						element={
+							<PublicRoute>
+								<Register />
+							</PublicRoute>
+						}
+					/>
 
-				<Route
-					path="/posts/feed"
-					element={
-						<ProtectedRoute>
-							<Layout>
-								<Feed />
-							</Layout>
-						</ProtectedRoute>
-					}
-				/>
+					<Route
+						path="/"
+						element={
+							<ProtectedRoute>
+								<Layout>
+									<Feed />
+								</Layout>
+							</ProtectedRoute>
+						}
+					/>
 
-				<Route
-					path="/posts/:id"
-					element={
-						<ProtectedRoute>
-							<Layout post="post">
-								<Post />
-							</Layout>
-						</ProtectedRoute>
-					}
-				/>
+					<Route
+						path="/posts/:id"
+						element={
+							<ProtectedRoute>
+								<Layout post="post">
+									<Post />
+								</Layout>
+							</ProtectedRoute>
+						}
+					/>
 
-				<Route
-					path="/profile/:id"
-					element={
-						<ProtectedRoute>
-							<Layout>
-								<Profile />
-							</Layout>
-						</ProtectedRoute>
-					}
-				/>
+					<Route
+						path="/profile/:id"
+						element={
+							<ProtectedRoute>
+								<Layout>
+									<Profile />
+								</Layout>
+							</ProtectedRoute>
+						}
+					/>
 
-				<Route
-					path="/profile/:id/edit"
-					element={
-						<ProtectedRoute>
-							<Layout editProfile="editProfile">
-								<EditProfile />
-							</Layout>
-						</ProtectedRoute>
-					}
-				/>
-			</Routes>
+					<Route
+						path="/profile/:id/edit"
+						element={
+							<ProtectedRoute>
+								<Layout editProfile="editProfile">
+									<EditProfile />
+								</Layout>
+							</ProtectedRoute>
+						}
+					/>
+				</Routes>
+			</FormContextProvider>
 		</Router>
 	);
 }

@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import timeAgo from '../timeAgo';
+import timeAgo from '../utils/timeAgo';
 import { User } from 'lucide-react';
 
 const CommentCard = ({ comment, setReplyTo, setCommentData }) => {

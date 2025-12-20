@@ -84,10 +84,13 @@ export const getFeedPosts = async (userId, limit = 20, offset = 0) => {
 // get post by user ID
 export const getPostsByUserId = async (userId, limit = 20) => {
 	const result = await pool.query(
-		`SELECT p.*, u.username, pr.avatar_url, pr.display_name
+		`SELECT p.*, u.username, pr.avatar_url, pr.display_name, l.like_id
       FROM posts p
       JOIN users u ON p.user_id = u.user_id
       JOIN profiles pr on u.user_id = pr.user_id
+      LEFT JOIN likes l
+        ON p.post_id = l.post_id
+        AND l.user_id = $1
       WHERE p.user_id = $1
       ORDER BY p.created_at DESC
       LIMIT $2`,

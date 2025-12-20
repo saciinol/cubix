@@ -8,7 +8,7 @@ const Login = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 
-	const from = location.state?.from?.pathname || '/posts/feed';
+	const from = location.state?.from?.pathname || '/';
 
 	const handleLogin = async (email, password) => {
 		await login(email, password);
