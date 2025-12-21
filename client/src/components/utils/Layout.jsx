@@ -1,17 +1,20 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Box, LogOut, User } from 'lucide-react';
-import { useAuthStore, useProfileStore } from '../../store';
 import Dropdown, { DropdownItem } from '../ui/Dropdown';
 import { useEffect } from 'react';
 import useFormContext from './useFormContext';
+import { useAuthActions, useUser } from '../../store/authStore';
+import { useProfileActions, useProfiles } from '../../store/profileStore';
 
 const Layout = ({ children, ...props }) => {
-	const { user, logout } = useAuthStore();
-	const { getProfile, loadProfile } = useProfileStore();
+	const user = useUser();
+	const { logout } = useAuthActions();
+	const { loadProfile } = useProfileActions();
+	const getProfile = useProfiles();
 	const { onSubmit, isSubmitting } = useFormContext();
 	const navigate = useNavigate();
 
-	const profile = getProfile(user?.user_id || user?.id);
+	const profile = getProfile[user?.user_id || user?.id];
 
 	useEffect(() => {
 		if (user?.user_id || user?.id) {
@@ -51,13 +54,15 @@ const Layout = ({ children, ...props }) => {
 								{props.editProfile && <p className="font-bold text-xl">Edit Profile</p>}
 							</div>
 
-							<button
-								onClick={handleSave}
-								disabled={isSubmitting}
-								className="cursor-pointer font-bold text-lg hover:text-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-							>
-								Save
-							</button>
+							{props.editProfile && (
+								<button
+									onClick={handleSave}
+									disabled={isSubmitting}
+									className="cursor-pointer font-bold text-lg hover:text-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+								>
+									Save
+								</button>
+							)}
 						</div>
 					</nav>
 				</header>
@@ -82,7 +87,7 @@ const Layout = ({ children, ...props }) => {
 					<div className="py-1 px-2 flex items-center justify-center gap-1 cursor-pointer">
 						<Dropdown
 							trigger={
-								profile.avatar_url ? (
+								profile?.avatar_url ? (
 									<img src={profile?.avatar_url} alt={profile?.username} className="size-8 rounded-full object-cover" />
 								) : (
 									<User className="bg-blue-300 size-8 rounded-full object-cover" />

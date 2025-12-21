@@ -1,28 +1,49 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link, Loader2, MapPin, User } from 'lucide-react';
-import { useAuthStore, useProfileStore } from '../../store';
 import Button from '../ui/Button';
+import { useUser } from '../../store/authStore';
+import { useFollowActions, useFollowing, useIsLoading } from '../../store/followStore';
+import { useError, useProfileActions, useProfiles } from '../../store/profileStore';
 
 const ProfileDetails = () => {
 	const { id } = useParams();
-	const { user } = useAuthStore();
-	const { getProfile, loadProfile, isProfileLoading, error } = useProfileStore();
+	const user = useUser();
+	const { loadProfile, isProfileLoading } = useProfileActions();
+	const getProfile = useProfiles();
+	const error = useError();
+	const following = useFollowing();
+	const isLoading = useIsLoading();
+	const { isFollowing, toggleFollowUser } = useFollowActions();
 	const navigate = useNavigate();
 
 	useEffect(() => {
 		if (id) {
 			loadProfile(id);
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [id]);
+
+	useEffect(() => {
+		if (id) {
+			isFollowing(id);
+		}
 	}, [id]);
 
 	const handleEditProfile = () => {
 		navigate(`/profile/${id}/edit`);
 	};
 
-	const profile = getProfile(id);
+	const handleFollow = async () => {
+		try {
+			await toggleFollowUser(id);
+		} catch (error) {
+			console.log('Failed to follow', error);
+		}
+	};
+
+	const profile = getProfile[id];
 	const loading = isProfileLoading(id);
 
 	if (loading && !profile) {
@@ -61,13 +82,32 @@ const ProfileDetails = () => {
 				</div>
 			</div>
 
-			{(id == user.user_id || id == user.id) && (
-				<div className="flex justify-end" onClick={handleEditProfile}>
+			{id == user.user_id || id == user.id ? (
+				<div className="flex justify-end">
 					<Button
 						variant="transparent"
 						className="absolute -mt-10 mr-2 lg:mr-0 md:-mt-16 text-sm h-8! px-3! md:text-base md:h-10! md:px-4!"
+						onClick={handleEditProfile}
 					>
 						Edit Profile
+					</Button>
+				</div>
+			) : (
+				<div className="flex justify-end">
+					<Button
+						variant="transparent"
+						className={`absolute -mt-10 mr-2 lg:mr-0 md:-mt-16 text-sm h-8! px-3! md:text-base md:h-10! md:px-4! ${
+							following && 'bg-black! text-white! hover:bg-white! hover:text-black!'
+						}`}
+						onClick={handleFollow}
+					>
+						{isLoading ? (
+							<div className="min-h-[calc(100vh-132px)] flex items-center justify-center">
+								<Loader2 className="size-6 animate-spin" />
+							</div>
+						) : (
+							<p>{following ? 'Following' : 'Follow'}</p>
+						)}
 					</Button>
 				</div>
 			)}
@@ -90,16 +130,18 @@ const ProfileDetails = () => {
 				<p>{profile.bio}</p>
 			</div>
 
-			<div className="flex gap-3 m-2">
-				<div className='flex gap-1 items-center justify-center text-black/60 text-sm'>
-					<MapPin className='size-4' />
-					<p>{profile.location}</p>
+			{(profile.location || profile.website) && (
+				<div className="flex flex-col md:flex-row md:gap-3 m-2">
+					<div className="flex gap-1 items-center text-black/60 text-sm">
+						<MapPin className="size-4" />
+						<p>{profile.location}</p>
+					</div>
+					<div className="flex gap-1 items-center text-black/60 text-sm">
+						<Link className="size-4" />
+						<p>{profile.website}</p>
+					</div>
 				</div>
-				<div className='flex gap-1 items-center justify-center text-black/60 text-sm'>
-					<Link className='size-4' />
-					<p>{profile.website}</p>
-				</div>
-			</div>
+			)}
 		</div>
 	);
 };

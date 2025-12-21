@@ -1,12 +1,10 @@
 import { MessageSquareMore, ThumbsUp, User } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import { usePostStore } from '../../store';
 import timeAgo from '../utils/timeAgo';
 import { usePostActions } from '../../store/postStore';
 
-const PostCard = ({ post }) => {
-	// const { toggleLikePost } = usePostStore();
+const PostCard = ({ post, currentPost }) => {
 	const { toggleLikePost } = usePostActions();
 
 	const [isLiking, setIsLiking] = useState(false);
@@ -19,7 +17,7 @@ const PostCard = ({ post }) => {
 		setIsLiking(true);
 
 		try {
-			await toggleLikePost(post.post_id);
+			await toggleLikePost(post?.post_id || currentPost?.post_id);
 		} catch (error) {
 			console.error(error);
 		} finally {
@@ -30,34 +28,34 @@ const PostCard = ({ post }) => {
 	const handleProfileClick = (e) => {
 		e.preventDefault();
 		e.stopPropagation();
-		navigate(`/profile/${post.user_id}`);
+		navigate(`/profile/${post?.user_id || currentPost?.user_id}`);
 	};
 
 	const handlePostClick = () => {
-		navigate(`/posts/${post.post_id}`);
+		navigate(`/posts/${post?.post_id || currentPost?.post_id}`);
 	};
 
 	return (
-		<div className="w-full hover:bg-gray-50 transition-colors" onClick={handlePostClick}>
+		<div className="w-full hover:bg-gray-50 transition-colors" onClick={post && handlePostClick}>
 			<div className="flex justify-between m-2">
 				<div onClick={handleProfileClick} className="flex items-center gap-2 cursor-pointer">
-					{post.avatar_url ? (
-						<img src={post.avatar_url} alt={post.username} className="size-11 rounded-full object-cover" />
+					{(post?.avatar_url || currentPost?.avatar_url) ? (
+						<img src={post?.avatar_url || currentPost?.avatar_url} alt={post?.username || currentPost.username} className="size-11 rounded-full object-cover" />
 					) : (
 						<User className="bg-blue-300 size-11 rounded-full object-cover" />
 					)}
 					<div>
-						<p className="text-base/tight font-bold">{post.display_name || post.username}</p>
-						<p className="text-sm/tight text-gray-700">@{post.username}</p>
+						<p className="text-base/tight font-bold">{(post?.display_name || post?.username) || (currentPost?.display_name || currentPost?.username)}</p>
+						<p className="text-sm/tight text-gray-700">@{post?.username || currentPost?.username}</p>
 					</div>
 				</div>
-				<p className="text-xs text-gray-500">{timeAgo(post.created_at)}</p>
+				<p className="text-xs text-gray-500">{timeAgo(post?.created_at || currentPost?.created_at)}</p>
 			</div>
 
 			<div className="mx-2 mb-2">
-				<p className="text-base leading-snug whitespace-pre-wrap wrap-break-word">{post.content}</p>
-				{post.image_url && (
-					<img src={post.image_url} alt={post.username} className="my-2 rounded-lg w-full object-cover max-h-96" />
+				<p className="text-base leading-snug whitespace-pre-wrap wrap-break-word">{post?.content || currentPost?.content}</p>
+				{(post?.image_url || currentPost?.image_url) && (
+					<img src={post?.image_url || currentPost?.image_url} alt={post?.username || currentPost?.username} className="my-2 rounded-lg w-full object-cover max-h-96" />
 				)}
 			</div>
 
@@ -66,13 +64,13 @@ const PostCard = ({ post }) => {
 					onClick={handleLike}
 					disabled={isLiking}
 					className={`flex items-center gap-1.5 group cursor-pointer ${
-						post.like_id ? 'text-blue-500' : 'hover:text-blue-500 transition-colors disabled:opacity-50'
+						(post?.like_id || currentPost?.like_id) ? 'text-blue-500' : 'hover:text-blue-500 transition-colors disabled:opacity-50'
 					}`}
 				>
 					<ThumbsUp
-						className={`size-5 ${post.like_id ? 'fill-current' : 'group-hover:scale-110 transition-transform'}`}
+						className={`size-5 ${(post?.like_id || currentPost?.like_id) ? 'fill-current' : 'group-hover:scale-110 transition-transform'}`}
 					/>
-					<span className="text-sm font-medium">{post.likes_count}</span>
+					<span className="text-sm font-medium">{post?.likes_count || currentPost?.likes_count}</span>
 				</button>
 
 				<div
@@ -80,7 +78,7 @@ const PostCard = ({ post }) => {
 					className="flex items-center gap-1.5 hover:text-green-500 transition-colors cursor-pointer"
 				>
 					<MessageSquareMore className="size-5" />
-					<p className="text-sm font-medium">{post.comments_count}</p>
+					<p className="text-sm font-medium">{post?.comments_count || currentPost?.comments_count}</p>
 				</div>
 			</div>
 		</div>

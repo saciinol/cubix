@@ -230,6 +230,7 @@ export default usePostStore;
 export const useAllPosts = () => usePostStore((state) => state.allPosts);
 export const useFeedPosts = () => usePostStore((state) => state.feedPosts);
 export const useCurrentPosts = () => usePostStore((state) => state.currentPost);
+export const useUserPosts = () => usePostStore((state) => state.userPosts);
 export const useIsLoading = () => usePostStore((state) => state.isLoading);
 export const useIsSubmitting = () => usePostStore((state) => state.isSubmitting);
 export const usePostActions = () => usePostStore((state) => state.actions);

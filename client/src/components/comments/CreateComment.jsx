@@ -1,9 +1,10 @@
 import { SendHorizonal } from 'lucide-react';
-import { useCommentStore } from '../../store';
 import Button from '../ui/Button';
+import { useCommentsActions, useIsSubmitting } from '../../store/commentStore';
 
 const CreateComment = ({ id, replyTo, setReplyTo, commentData, setCommentData }) => {
-	const { createComment, isSubmitting } = useCommentStore();
+	const { createComment } = useCommentsActions();
+	const isSubmitting = useIsSubmitting();
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;

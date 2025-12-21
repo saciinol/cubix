@@ -11,9 +11,19 @@ export const toggleFollow = async (userId, followingId) => {
 	} else {
 		await followModel.followUser(userId, followingId);
 
-      const receiver = await findByUserId(followingId);
-      await createNotification(receiver.user_id, userId, 'follow', null, null);
+		const receiver = await findByUserId(followingId);
+		await createNotification(receiver.user_id, userId, 'follow', null, null);
 
 		return { followed: true };
+	}
+};
+
+export const isFollowing = async (userId, followingId) => {
+	const existingFollow = await followModel.checkIfFollowing(userId, followingId);
+
+	if (existingFollow) {
+		return { followed: true };
+	} else {
+		return { followed: false };
 	}
 };

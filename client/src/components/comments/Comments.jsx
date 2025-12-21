@@ -2,13 +2,15 @@ import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 
-import { useCommentStore } from '../../store';
 import CommentThread from './CommentThread';
 import CreateComment from './CreateComment';
+import { useComments, useCommentsActions, useIsLoading } from '../../store/commentStore';
 
 const Comments = () => {
 	const { id } = useParams();
-	const { getComments, loadComments, isLoading } = useCommentStore();
+  const getComments = useComments();
+  const isLoading = useIsLoading();
+  const {loadComments} = useCommentsActions();
 	const [commentData, setCommentData] = useState({
 		content: '',
 		parent_comment_id: null,
@@ -22,11 +24,11 @@ const Comments = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [id]);
 
-	const comments = getComments(id);
+	const comments = getComments[id];
 
 	const repliesByParentId = useMemo(() => {
 		const map = {};
-		comments.forEach((c) => {
+		comments?.forEach((c) => {
 			if (c.parent_comment_id) {
 				map[c.parent_comment_id] ||= [];
 				map[c.parent_comment_id].push(c);
@@ -36,7 +38,7 @@ const Comments = () => {
 	}, [comments]);
 
 	const topLevelComments = useMemo(() => {
-		return comments.filter((c) => !c.parent_comment_id);
+		return comments?.filter((c) => !c.parent_comment_id);
 	}, [comments]);
 
 
@@ -52,7 +54,7 @@ const Comments = () => {
 		<div className="flex flex-col">
 			{/* render comments recursively */}
 			<div className="flex flex-col m-2 gap-4">
-				{topLevelComments.length > 0 ? (
+				{topLevelComments?.length > 0 ? (
 					topLevelComments.map((comment) => (
 						<CommentThread
 							key={comment.comment_id}

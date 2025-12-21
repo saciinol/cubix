@@ -1,11 +1,10 @@
 import { useState } from 'react';
-import { useAuthStore, usePostStore } from '../../store';
 import Button from '../ui/Button';
 import { useIsSubmitting, usePostActions } from '../../store/postStore';
+import { useUser } from '../../store/authStore';
 
 const CreatePost = () => {
-	const { user } = useAuthStore();
-	// const { createPost, isSubmitting } = usePostStore();
+  const user = useUser();
 	const { createPost } = usePostActions();
 	const isSubmitting = useIsSubmitting();
 

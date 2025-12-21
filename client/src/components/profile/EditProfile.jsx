@@ -2,13 +2,16 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Loader2, User } from 'lucide-react';
-import { useAuthStore, useProfileStore } from '../../store';
 import Input from '../ui/Input';
 import useFormContext from '../utils/useFormContext';
+import { useUser } from '../../store/authStore';
+import { useIsSubmitting, useProfileActions, useProfiles } from '../../store/profileStore';
 
 const EditProfile = () => {
-	const { user } = useAuthStore();
-	const { getProfile, loadProfile, updateProfile, isSubmitting } = useProfileStore();
+	const user = useUser();
+	const getProfile = useProfiles();
+	const { loadProfile, updateProfile } = useProfileActions();
+	const isSubmitting = useIsSubmitting();
 	const { setFormSubmit, setIsSubmitting } = useFormContext();
 	const navigate = useNavigate();
 
@@ -28,7 +31,7 @@ const EditProfile = () => {
 		website: '',
 	});
 
-	const profile = getProfile(user?.user_id || user?.id);
+	const profile = getProfile[user?.user_id || user?.id];
 
 	useEffect(() => {
 		if (user?.user_id || user?.id) {
@@ -103,7 +106,7 @@ const EditProfile = () => {
 	}
 
 	return (
-		<div className="max-w-4xl mx-auto">
+		<div className="max-w-4xl mx-auto mb-5">
 			<div className="flex flex-col items-center mb-2">
 				<div>
 					<img src={profile.cover_url} alt="" className="w-full max-w-[900px] max-h-[300px] object-cover" />
@@ -111,16 +114,20 @@ const EditProfile = () => {
 
 				<div>
 					{profile.avatar_url ? (
-						<img src={profile.avatar_url} alt="" className="rounded-full object-cover -mt-12 size-24 md:-mt-18 md:size-36 border-3 border-muted" />
+						<img
+							src={profile.avatar_url}
+							alt=""
+							className="rounded-full object-cover -mt-12 size-24 md:-mt-18 md:size-36 border-3 border-muted"
+						/>
 					) : (
 						<User className="bg-blue-300 size-24 md:size-36 rounded-full object-cover mt-12 border-3 border-muted" />
 					)}{' '}
 				</div>
 			</div>
 
-			<div className="mx-3 mt-5 flex flex-col gap-5">
+			<div className="max-w-2xl md:mx-auto mt-5 flex flex-col gap-5">
 				{fields.map((field) => (
-					<div className="relative" key={field.name}>
+					<div className="relative mx-3" key={field.name}>
 						{field.type === 'textarea' ? (
 							<textarea
 								id={field.name}
@@ -141,11 +148,10 @@ const EditProfile = () => {
 								onChange={handleChange}
 								placeholder=""
 								disabled={isSubmitting}
-								className="peer w-full focus:border-blue-600! rounded-sm! border pt-5! pb-2! focus:outline-none h-auto!"
 							/>
 						)}
 						<label
-							htmlFor="display_name"
+							htmlFor={field.name}
 							className="absolute select-none left-3 top-4 text-sm text-gray-400 transition-all
                peer-placeholder-shown:top-4
                peer-placeholder-shown:text-base

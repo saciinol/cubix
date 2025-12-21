@@ -80,7 +80,7 @@ api.interceptors.response.use(
 					});
 				}
 
-				useAuthStore.getState().logout();
+				useAuthStore.getState().actions.logout();
 				window.location.href = '/login';
 
 				return Promise.reject({

@@ -1,11 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Box } from 'lucide-react';
 
-import { useAuthStore } from '../store';
 import RegisterForm from '../components/loginRegister/RegisterForm';
+import { useAuthActions, useIsLoading } from '../store/authStore';
 
 const Register = () => {
-	const { register, isLoading } = useAuthStore();
+	const { register } = useAuthActions();
+	const isLoading = useIsLoading();
 	const navigate = useNavigate();
 
 	const handleRegister = async (formData) => {
@@ -25,8 +26,8 @@ const Register = () => {
 					</div>
 
 					<div className="flex w-full flex-col gap-8">
-            <RegisterForm onSubmit={handleRegister} isLoading={isLoading} />
-          </div>
+						<RegisterForm onSubmit={handleRegister} isLoading={isLoading} />
+					</div>
 
 					<div className="text-gray-500 flex justify-center gap-1 text-base">
 						<p>Already have an account?</p>

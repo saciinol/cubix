@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import { sanitizeInput, validateRegister } from '../../utils/validation';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
-import { sanitizeInput, validateRegister } from '../../utils/validation';
+import Label from '../ui/Label';
 
 const RegisterForm = ({ onSubmit, isLoading }) => {
 	const [formData, setFormData] = useState({
@@ -56,52 +57,61 @@ const RegisterForm = ({ onSubmit, isLoading }) => {
 
 	return (
 		<form onSubmit={handleSubmit} className="flex flex-col">
-			<div className="flex flex-col">
+			<div className="relative flex flex-col">
 				<Input
+					id="username"
 					type="text"
 					name="username"
 					value={formData.username}
 					onChange={handleChange}
 					className={`${validationErrors.username ? 'border-red-600 focus:border-red-600' : ''}`}
-					placeholder="Username"
+					placeholder=""
 					disabled={isLoading}
 					required
 				/>
+
+				<Label htmlFor="username">Username</Label>
 
 				<p className={`ml-1 text-red-600 text-sm ${validationErrors.username ? 'opacity-100' : 'opacity-0'}`}>
 					{validationErrors.username ? validationErrors.username : '&nbsp;'}
 				</p>
 			</div>
 
-			<div className="flex flex-col">
+			<div className="relative flex flex-col">
 				<Input
+					id="email"
 					type="email"
 					name="email"
 					value={formData.email}
 					onChange={handleChange}
 					className={`${validationErrors.email ? 'border-red-600 focus:border-red-600' : ''}`}
-					placeholder="Email"
+					placeholder=""
 					disabled={isLoading}
 					required
 				/>
+
+				<Label htmlFor="email">Email</Label>
 
 				<p className={`ml-1 text-red-600 text-sm ${validationErrors.email ? 'opacity-100' : 'opacity-0'}`}>
 					{validationErrors.email ? validationErrors.email : '&nbsp;'}
 				</p>
 			</div>
 
-			<div className="flex flex-col">
+			<div className="relative flex flex-col">
 				<div className="flex items-center justify-end">
 					<Input
+						id="password"
 						type={showPassword ? 'text' : 'password'}
 						name="password"
 						value={formData.password}
 						onChange={handleChange}
 						className={`${validationErrors.password ? 'border-red-600 focus:border-red-600' : ''}`}
-						placeholder="Password"
+						placeholder=""
 						disabled={isLoading}
 						required
 					/>
+
+					<Label htmlFor="password">Password</Label>
 
 					<div
 						onClick={() => setShowPassword(!showPassword)}
@@ -116,18 +126,21 @@ const RegisterForm = ({ onSubmit, isLoading }) => {
 				</p>
 			</div>
 
-			<div className="flex flex-col">
+			<div className="relative flex flex-col">
 				<div className="flex items-center justify-end">
 					<Input
+						id="confirmPassword"
 						type={showConfirmPassword ? 'text' : 'password'}
 						name="confirmPassword"
 						value={formData.confirmPassword}
 						onChange={handleChange}
 						className={`${validationErrors.confirmPassword ? 'border-red-600 focus:border-red-600' : ''}`}
-						placeholder="Confirm Password"
+						placeholder=""
 						disabled={isLoading}
 						required
 					/>
+
+					<Label htmlFor="confirmPassword">Confirm Password</Label>
 
 					<div
 						onClick={() => setShowConfirmPassword(!showConfirmPassword)}

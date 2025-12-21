@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'r
 import { useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 
-import { useAuthStore } from './store';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Layout from './components/utils/Layout';
@@ -11,9 +10,10 @@ import Post from './components/post/Post';
 import Profile from './pages/Profile';
 import EditProfile from './components/profile/EditProfile';
 import FormContextProvider from './components/utils/FormContextProvider';
+import { useAuthActions, useIsAuthenticated, useIsInitialized } from './store/authStore';
 
 const ProtectedRoute = ({ children }) => {
-	const { isAuthenticated } = useAuthStore();
+	const isAuthenticated = useIsAuthenticated();
 	const location = useLocation();
 
 	if (!isAuthenticated) {
@@ -24,7 +24,7 @@ const ProtectedRoute = ({ children }) => {
 };
 
 const PublicRoute = ({ children }) => {
-	const { isAuthenticated } = useAuthStore();
+	const isAuthenticated = useIsAuthenticated();
 
 	if (isAuthenticated) {
 		return <Navigate to="/" replace />;
@@ -34,7 +34,8 @@ const PublicRoute = ({ children }) => {
 };
 
 function App() {
-	const { initAuth, isInitialized } = useAuthStore();
+	const isInitialized = useIsInitialized();
+	const { initAuth } = useAuthActions();
 
 	useEffect(() => {
 		initAuth();

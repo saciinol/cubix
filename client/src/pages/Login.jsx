@@ -1,10 +1,11 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Box } from 'lucide-react';
-import { useAuthStore } from '../store';
 import LoginForm from '../components/loginRegister/LoginForm';
+import { useAuthActions, useIsLoading } from '../store/authStore';
 
 const Login = () => {
-	const { login, isLoading } = useAuthStore();
+	const { login } = useAuthActions();
+	const isLoading = useIsLoading();
 	const navigate = useNavigate();
 	const location = useLocation();
 

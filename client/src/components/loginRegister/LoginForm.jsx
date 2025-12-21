@@ -3,6 +3,7 @@ import { Loader2, Eye, EyeOff } from 'lucide-react';
 
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
+import Label from '../ui/Label';
 
 const LoginForm = ({ onSubmit, isLoading }) => {
 	const [formData, setFormData] = useState({
@@ -36,31 +37,37 @@ const LoginForm = ({ onSubmit, isLoading }) => {
 
 	return (
 		<form onSubmit={handleSubmit} className="flex flex-col gap-4">
-			<div className="flex flex-col gap-2">
+			<div className="flex flex-col gap-2 relative">
 				<Input
+					id="email"
 					type="email"
 					name="email"
 					value={formData.email}
 					onChange={handleChange}
 					className={`${validationErrors ? 'border-red-600 focus:border-red-600' : ''}`}
-					placeholder="Email"
+					placeholder=""
 					disabled={isLoading}
 					required
 				/>
+
+				<Label htmlFor="email">Email</Label>
 			</div>
 
 			<div className="flex flex-col">
 				<div className="flex items-center justify-end relative">
 					<Input
+						id="password"
 						type={showPassword ? 'text' : 'password'}
 						name="password"
 						value={formData.password}
 						onChange={handleChange}
 						className={`pr-12 ${validationErrors ? 'border-red-600 focus:border-red-600' : ''}`}
-						placeholder="Password"
+						placeholder=""
 						disabled={isLoading}
 						required
 					/>
+
+					<Label htmlFor="password">Password</Label>
 
 					<div
 						onClick={() => setShowPassword(!showPassword)}
