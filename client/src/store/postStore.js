@@ -9,8 +9,6 @@ import {
 	toggleLike,
 } from '../services/postService';
 
-// REMOVE ERROR STATE? BECAUSE INTERCEPTOR HANDLES ERRORS?
-
 const usePostStore = create((set, get) => ({
 	// state
 	allPosts: [],
@@ -19,7 +17,6 @@ const usePostStore = create((set, get) => ({
 	currentPost: null,
 	isLoading: false,
 	isSubmitting: false,
-	error: null,
 	actions: {
 		// getters
 		getUserPosts: (userId) => {
@@ -59,7 +56,7 @@ const usePostStore = create((set, get) => ({
 
 		// actions
 		loadAllPosts: async () => {
-			set({ isLoading: true, error: null });
+			set({ isLoading: true });
 
 			try {
 				const { posts } = await getPosts();
@@ -69,14 +66,14 @@ const usePostStore = create((set, get) => ({
 				});
 			} catch (error) {
 				set({
-					error: error.message,
 					isLoading: false,
 				});
+				throw error;
 			}
 		},
 
 		loadFeedPosts: async () => {
-			set({ isLoading: true, error: null });
+			set({ isLoading: true });
 
 			try {
 				const { posts } = await getFeedPostsAPI();
@@ -86,14 +83,14 @@ const usePostStore = create((set, get) => ({
 				});
 			} catch (error) {
 				set({
-					error: error.message,
 					isLoading: false,
 				});
+				throw error;
 			}
 		},
 
 		loadUserPosts: async (userId) => {
-			set({ isLoading: true, error: null });
+			set({ isLoading: true });
 
 			try {
 				const { posts } = await getUserPostsAPI(userId);
@@ -106,14 +103,14 @@ const usePostStore = create((set, get) => ({
 				}));
 			} catch (error) {
 				set({
-					error: error.message,
 					isLoading: false,
 				});
+				throw error;
 			}
 		},
 
 		loadPost: async (postId) => {
-			set({ isLoading: true, error: null });
+			set({ isLoading: true });
 
 			try {
 				const { post } = await getPostById(postId);
@@ -123,10 +120,10 @@ const usePostStore = create((set, get) => ({
 				});
 			} catch (error) {
 				set({
-					error: error.message,
 					isLoading: false,
 					currentPost: null,
 				});
+				throw error;
 			}
 		},
 
@@ -161,14 +158,12 @@ const usePostStore = create((set, get) => ({
 			} catch (error) {
 				set(originalState);
 
-				set({ error: error.message || 'Failed to toggle like' });
-
 				throw error;
 			}
 		},
 
 		createPost: async (content, image_url, userId) => {
-			set({ isSubmitting: true, error: null });
+			set({ isSubmitting: true });
 
 			try {
 				const { post } = await createPostAPI({ content, image_url });
@@ -188,7 +183,6 @@ const usePostStore = create((set, get) => ({
 				return post;
 			} catch (error) {
 				set({
-					error: error.message,
 					isSubmitting: false,
 				});
 				throw error;
@@ -196,7 +190,7 @@ const usePostStore = create((set, get) => ({
 		},
 
 		deletePost: async (postId, userId) => {
-			set({ isSubmitting: true, error: null });
+			set({ isSubmitting: true });
 
 			try {
 				await deletePostAPI(postId);
@@ -214,14 +208,11 @@ const usePostStore = create((set, get) => ({
 				}));
 			} catch (error) {
 				set({
-					error: error.message,
 					isSubmitting: false,
 				});
 				throw error;
 			}
 		},
-
-		clearError: () => set({ error: null }),
 	},
 }));
 

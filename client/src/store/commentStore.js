@@ -10,7 +10,6 @@ const useCommentStore = create((set, get) => ({
 	comments: {},
 	isLoading: false,
 	isSubmitting: false,
-	error: false,
 
 	actions: {
 		// getters
@@ -30,7 +29,7 @@ const useCommentStore = create((set, get) => ({
 		},
 
 		loadComments: async (postId) => {
-			set({ isLoading: true, error: null });
+			set({ isLoading: true });
 
 			try {
 				const { comments } = await getCommentsAPI(postId);
@@ -43,14 +42,14 @@ const useCommentStore = create((set, get) => ({
 				}));
 			} catch (error) {
 				set({
-					error: error.message,
 					isLoading: false,
 				});
+        throw error;
 			}
 		},
 
 		createComment: async (postId, { content, parent_comment_id = null }) => {
-			set({ isSubmitting: true, error: null });
+			set({ isSubmitting: true });
 
 			try {
 				const { comment } = await createCommentAPI(postId, {
@@ -71,7 +70,6 @@ const useCommentStore = create((set, get) => ({
 				return comment;
 			} catch (error) {
 				set({
-					error: error.message,
 					isSubmitting: false,
 				});
 				throw error;
@@ -79,7 +77,7 @@ const useCommentStore = create((set, get) => ({
 		},
 
 		deleteComment: async (commentId, postId) => {
-			set({ isSubmitting: true, error: null });
+			set({ isSubmitting: true });
 
 			try {
 				await deleteCommentAPI(commentId);
@@ -95,9 +93,9 @@ const useCommentStore = create((set, get) => ({
 				}));
 			} catch (error) {
 				set({
-					error: error.message,
 					isSubmitting: false,
 				});
+        throw error;
 			}
 		},
 	},

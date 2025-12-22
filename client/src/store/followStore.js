@@ -5,11 +5,10 @@ const useFollowStore = create((set) => ({
 	// state
 	following: false,
 	isLoading: false,
-	error: null,
 
 	actions: {
 		isFollowing: async (userId) => {
-			set({ isLoading: true, error: null });
+			set({ isLoading: true });
 			try {
 				const { follow } = await isFollowingAPI(userId);
 				set({
@@ -18,14 +17,14 @@ const useFollowStore = create((set) => ({
 				});
 			} catch (error) {
 				set({
-					error: error.message,
 					isLoading: false,
 				});
+        throw error;
 			}
 		},
 
 		toggleFollowUser: async (userId) => {
-			set({ isLoading: true, error: null });
+			set({ isLoading: true });
 			try {
 				const { follow } = await toggleFollow(userId);
 				set({
@@ -34,9 +33,9 @@ const useFollowStore = create((set) => ({
 				});
 			} catch (error) {
 				set({
-					error: error.message,
 					isLoading: false,
 				});
+        throw error;
 			}
 		},
 	},

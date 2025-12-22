@@ -29,7 +29,7 @@ const Post = () => {
 
 	return (
 		<div className="w-full max-w-2xl mx-auto">
-			<PostCard currentPost={currentPost} />
+			<PostCard post={currentPost} />
 			<Comments />
 		</div>
 	);

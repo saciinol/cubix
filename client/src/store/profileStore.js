@@ -7,7 +7,6 @@ const useProfileStore = create((set, get) => ({
 	loadingIds: new Set(),
 	isLoading: false,
 	isSubmitting: false,
-	error: null,
 
 	actions: {
 		getProfile: (userId) => {
@@ -45,13 +44,11 @@ const useProfileStore = create((set, get) => ({
 					},
 					isLoading: state.loadingIds.size === 1 ? false : true,
 					loadingIds: new Set([...state.loadingIds].filter((id) => id !== userId)),
-					error: null,
 				}));
 
 				return profile;
 			} catch (error) {
 				set((state) => ({
-					error: error.message || 'Failed to load profile',
 					isLoading: state.loadingIds.size === 1 ? false : true,
 					loadingIds: new Set([...state.loadingIds].filter((id) => id !== userId)),
 				}));
@@ -60,7 +57,7 @@ const useProfileStore = create((set, get) => ({
 		},
 
 		updateProfile: async (userId, updates) => {
-			set({ isSubmitting: true, error: null });
+			set({ isSubmitting: true });
 
 			try {
 				const { profile } = await updateProfileAPI(userId, updates);
@@ -71,29 +68,18 @@ const useProfileStore = create((set, get) => ({
 						[userId]: profile,
 					},
 					isSubmitting: false,
-					error: null,
 				}));
 
 				return profile;
 			} catch (error) {
 				set({
-					error: error.message,
 					isSubmitting: false,
 				});
 				throw error;
 			}
 		},
 
-		clearError: () => set({ error: null }),
-
-		// clearProfile: (userId) => {
-		// 	set((state) => {
-		// 		const { [userId]: removed, ...rest } = state.profiles;
-		// 		return { profiles: rest };
-		// 	});
-		// },
-
-		clearAllProfiles: () => set({ profiles: {}, error: null }),
+		clearAllProfiles: () => set({ profiles: {} }),
 	},
 }));
 
@@ -103,5 +89,4 @@ export const useProfiles = () => useProfileStore((state) => state.profiles);
 export const useLoadingIds = () => useProfileStore((state) => state.loadingIds);
 export const useIsLoading = () => useProfileStore((state) => state.isLoading);
 export const useIsSubmitting = () => useProfileStore((state) => state.isSubmitting);
-export const useError = () => useProfileStore((state) => state.error);
 export const useProfileActions = () => useProfileStore((state) => state.actions);

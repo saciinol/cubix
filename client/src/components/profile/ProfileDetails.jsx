@@ -6,14 +6,13 @@ import { Link, Loader2, MapPin, User } from 'lucide-react';
 import Button from '../ui/Button';
 import { useUser } from '../../store/authStore';
 import { useFollowActions, useFollowing, useIsLoading } from '../../store/followStore';
-import { useError, useProfileActions, useProfiles } from '../../store/profileStore';
+import { useProfileActions, useProfiles } from '../../store/profileStore';
 
 const ProfileDetails = () => {
 	const { id } = useParams();
 	const user = useUser();
 	const { loadProfile, isProfileLoading } = useProfileActions();
 	const getProfile = useProfiles();
-	const error = useError();
 	const following = useFollowing();
 	const isLoading = useIsLoading();
 	const { isFollowing, toggleFollowUser } = useFollowActions();
@@ -52,10 +51,6 @@ const ProfileDetails = () => {
 				<Loader2 className="size-6 animate-spin" />
 			</div>
 		);
-	}
-
-	if (error && !profile) {
-		return <div className="min-h-screen flex items-center justify-center">Error: {error}</div>;
 	}
 
 	if (!profile) {

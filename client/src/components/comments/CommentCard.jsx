@@ -1,8 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import timeAgo from '../utils/timeAgo';
 import { User } from 'lucide-react';
+import { memo } from 'react';
 
-const CommentCard = ({ comment, setReplyTo, setCommentData }) => {
+const CommentCard = memo(({ comment, setReplyTo, setCommentData }) => {
 	const navigate = useNavigate();
 
 	const handleReply = () => {
@@ -61,6 +62,6 @@ const CommentCard = ({ comment, setReplyTo, setCommentData }) => {
 			</div>
 		</div>
 	);
-};
+});
 
 export default CommentCard;
