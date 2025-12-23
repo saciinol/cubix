@@ -14,17 +14,17 @@ const Layout = ({ children, ...props }) => {
 	const { onSubmit, isSubmitting } = useFormContext();
 	const navigate = useNavigate();
 
-	const profile = getProfile[user?.user_id || user?.id];
+	const profile = getProfile[user?.user_id];
 
 	useEffect(() => {
-		if (user?.user_id || user?.id) {
-			loadProfile(user?.user_id || user?.id);
+		if (user.user_id) {
+			loadProfile(user.user_id);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [user?.user_id || user?.id]);
+	}, [user.user_id]);
 
 	const handleProfile = () => {
-		navigate(`/profile/${user?.user_id || user?.id}`);
+		navigate(`/profile/${user.user_id}`);
 	};
 
 	const handleLogout = () => {
@@ -34,12 +34,6 @@ const Layout = ({ children, ...props }) => {
 
 	const handleGoBack = () => {
 		navigate(-1);
-	};
-
-	const handleSave = () => {
-		if (onSubmit) {
-			onSubmit();
-		}
 	};
 
 	if (props.post || props.editProfile) {
@@ -56,7 +50,7 @@ const Layout = ({ children, ...props }) => {
 
 							{props.editProfile && (
 								<button
-									onClick={handleSave}
+									onClick={onSubmit}
 									disabled={isSubmitting}
 									className="cursor-pointer font-bold text-lg hover:text-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
 								>
@@ -94,6 +88,7 @@ const Layout = ({ children, ...props }) => {
 								)
 							}
 						>
+
 							<DropdownItem onClick={handleProfile}>
 								<User className="size-5" />
 								<p className="text-sm/1">Profile</p>

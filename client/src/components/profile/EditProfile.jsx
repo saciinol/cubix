@@ -6,13 +6,14 @@ import Input from '../ui/Input';
 import useFormContext from '../utils/useFormContext';
 import { useUser } from '../../store/authStore';
 import { useIsSubmitting, useProfileActions, useProfiles } from '../../store/profileStore';
+import Label from '../ui/Label';
 
 const EditProfile = () => {
 	const user = useUser();
 	const getProfile = useProfiles();
 	const { loadProfile, updateProfile } = useProfileActions();
 	const isSubmitting = useIsSubmitting();
-	const { setFormSubmit, setIsSubmitting } = useFormContext();
+	const { setOnSubmit, setIsSubmitting } = useFormContext();
 	const navigate = useNavigate();
 
 	const fields = [
@@ -31,13 +32,15 @@ const EditProfile = () => {
 		website: '',
 	});
 
-	const profile = getProfile[user?.user_id || user?.id];
+	const [errors, setErrors] = useState({});
+
+	const profile = getProfile[user?.user_id];
 
 	useEffect(() => {
-		if (user?.user_id || user?.id) {
-			loadProfile(user?.user_id || user?.id);
+		if (user.user_id) {
+			loadProfile(user.user_id);
 		}
-	}, [user?.user_id || user?.id]);
+	}, [user.user_id]);
 
 	useEffect(() => {
 		if (profile) {
@@ -53,22 +56,38 @@ const EditProfile = () => {
 	}, [profile]);
 
 	const handleSubmit = async () => {
-		const updates = {};
-		Object.keys(profileData).forEach((key) => {
-			if (profileData[key] !== profile[key] || '') {
-				updates[key] = profileData[key] || null;
-			}
-		});
+		// validation
+		const newErrors = {};
+		if (profileData.display_name.trim().length > 100)
+			newErrors.display_name = 'Display name cannot exceed 100 characters';
+		if (profileData.bio.trim().length > 500) newErrors.bio = 'Bio cannot exceed 500 characters';
+		if (profileData.location.trim().length > 100) newErrors.location = 'Location cannot exceed 100 characters';
 
-		if (Object.keys(updates).length === 0) {
-			navigate(`/profile/${user.user_id || user.id}`);
+		if (Object.keys(newErrors).length > 0) {
+			setErrors(newErrors);
 			return;
 		}
 
 		setIsSubmitting(true);
+
+		const updates = {};
+		Object.keys(profileData).forEach((key) => {
+			const newValue = profileData[key] || null;
+			const oldValue = profile[key] || null;
+
+			if (newValue !== oldValue) {
+				updates[key] = newValue;
+			}
+		});
+
+		if (Object.keys(updates).length === 0) {
+			navigate(`/profile/${user.user_id}`);
+			return;
+		}
+
 		try {
-			await updateProfile(user.user_id || user.id, updates);
-			navigate(`/profile/${user.user_id || user.id}`);
+			await updateProfile(user.user_id, updates);
+			navigate(`/profile/${user.user_id}`);
 		} catch (error) {
 			console.error('Failed to update profile', error);
 		} finally {
@@ -77,12 +96,10 @@ const EditProfile = () => {
 	};
 
 	useEffect(() => {
-		setFormSubmit(handleSubmit);
+		setOnSubmit(() => handleSubmit);
 
-		return () => {
-			setFormSubmit(null);
-		};
-	}, [profileData, profile, user]);
+		return () => setOnSubmit(null);
+	}, [profileData, profile]);
 
 	useEffect(() => {
 		setIsSubmitting(isSubmitting);
@@ -95,6 +112,13 @@ const EditProfile = () => {
 			...prev,
 			[name]: value,
 		}));
+
+		if (errors[name]) {
+			setErrors((prev) => ({
+				...prev,
+				[name]: '',
+			}));
+		}
 	};
 
 	if (!profile) {
@@ -137,7 +161,7 @@ const EditProfile = () => {
 								rows={field.rows}
 								placeholder=""
 								disabled={isSubmitting}
-								className="flex border-gray-300 bg-transparent px-3 py-2 text-base placeholder:text-gray-500 focus:placeholder:text-gray-400  disabled:cursor-not-allowed disabled:opacity-50 peer w-full focus:border-blue-600 rounded-sm border pt-5! pb-2! focus:outline-none h-auto resize-none"
+								className="flex border-gray-300 bg-transparent px-3 pt-4 pb-2 text-base placeholder:text-gray-500 focus:placeholder:text-gray-400 disabled:cursor-not-allowed disabled:opacity-50 peer w-full focus:border-blue-600 rounded-md border focus:outline-none h-auto resize-none"
 							/>
 						) : (
 							<Input
@@ -150,22 +174,10 @@ const EditProfile = () => {
 								disabled={isSubmitting}
 							/>
 						)}
-						<label
-							htmlFor={field.name}
-							className="absolute select-none left-3 top-4 text-sm text-gray-400 transition-all
-               peer-placeholder-shown:top-4
-               peer-placeholder-shown:text-base
-             peer-placeholder-shown:text-gray-400
-               peer-focus:top-1
-               peer-focus:text-xs
-             peer-focus:text-blue-500
-               peer-not-placeholder-shown:top-1
-               peer-not-placeholder-shown:text-xs
-             peer-not-placeholder-shown:text-gray-500
-             pointer-events-none"
-						>
-							{field.label}
-						</label>
+
+						<Label htmlFor={field.name}>{field.label}</Label>
+
+						{errors[field.name] && <div className="text-red-600 text-xs mt-1 ml-3">{errors[field.name]}</div>}
 					</div>
 				))}
 			</div>

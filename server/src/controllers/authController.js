@@ -19,6 +19,7 @@ export const login = async (req, res, next) => {
 		const { email, password } = req.body;
 
 		const result = await authService.loginUser(email, password);
+
 		res.status(200).json({
 			token: result.token,
 			user: result.user,

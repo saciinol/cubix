@@ -2,21 +2,13 @@ import { useState } from 'react';
 import FormContext from './FormContext';
 
 const FormContextProvider = ({ children }) => {
-	const [formState, setFormState] = useState({
-		onSubmit: null,
-		isSubmitting: false,
-	});
-
-	const setFormSubmit = (submitFn) => {
-		setFormState((prev) => ({ ...prev, onSubmit: submitFn }));
-	};
-
-	const setIsSubmitting = (value) => {
-		setFormState((prev) => ({ ...prev, isSubmitting: value }));
-	};
+	const [onSubmit, setOnSubmit] = useState(null);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	return (
-		<FormContext.Provider value={{ ...formState, setFormSubmit, setIsSubmitting }}>{children}</FormContext.Provider>
+		<FormContext.Provider value={{ onSubmit, setOnSubmit, isSubmitting, setIsSubmitting }}>
+			{children}
+		</FormContext.Provider>
 	);
 };
 

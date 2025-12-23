@@ -41,7 +41,7 @@ const useAuthStore = create(
 					set({ isLoading: true });
 
 					try {
-						const { user, token } = await loginUser(email, password);
+						const { token, user } = await loginUser(email, password);
 						set({
 							user,
 							token,

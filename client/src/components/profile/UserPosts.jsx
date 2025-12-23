@@ -17,7 +17,7 @@ const UserPosts = () => {
 			loadUserPosts(id);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [id]);
 
 	return (
 		<div className="w-full max-w-2xl mx-auto md:mx-0">
@@ -27,7 +27,7 @@ const UserPosts = () => {
 						<Loader2 className="size-6 animate-spin" />
 					</div>
 				) : posts && posts.length > 0 ? (
-					posts.map((post) => <PostCard key={post.post_id} post={post} notPost={true} />)
+					posts.map((post) => <PostCard key={post.post_id} post={post} />)
 				) : (
 					<div className="min-h-[calc(100vh-132px)] flex items-center justify-center text-gray-500">
 						<p>No posts yet. Be the first to post!</p>

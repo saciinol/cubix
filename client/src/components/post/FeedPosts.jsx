@@ -20,7 +20,7 @@ const FeedPosts = () => {
 					<Loader2 className="size-6 animate-spin" />
 				</div>
 			) : feedPosts && feedPosts.length > 0 ? (
-				feedPosts.map((post) => <PostCard key={post.post_id} post={post} notPost={true} />)
+				feedPosts.map((post) => <PostCard key={post.post_id} post={post} />)
 			) : (
 				<div className="min-h-[calc(100vh-132px)] flex items-center justify-center text-gray-500">
 					<p>No posts yet. Be the first to post!</p>

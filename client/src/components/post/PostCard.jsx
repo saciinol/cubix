@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import timeAgo from '../utils/timeAgo';
 import { usePostActions } from '../../store/postStore';
 
-const PostCard = memo(({ post, ...props }) => {
+const PostCard = memo(({ post, disableClick }) => {
 	const { toggleLikePost } = usePostActions();
 
 	const [isLiking, setIsLiking] = useState(false);
@@ -32,11 +32,12 @@ const PostCard = memo(({ post, ...props }) => {
 	};
 
 	const handlePostClick = () => {
+    if (disableClick) return;
 		navigate(`/posts/${post?.post_id}`);
 	};
 
 	return (
-		<div className="w-full hover:bg-gray-50 transition-colors" onClick={props.notPost && handlePostClick}>
+		<div className="w-full hover:bg-gray-50 transition-colors" onClick={handlePostClick}>
 			<div className="flex justify-between m-2">
 				<div onClick={handleProfileClick} className="flex items-center gap-2 cursor-pointer">
 					{post?.avatar_url ? (

@@ -8,9 +8,9 @@ import { useComments, useCommentsActions, useIsLoading } from '../../store/comme
 
 const Comments = () => {
 	const { id } = useParams();
-  const getComments = useComments();
-  const isLoading = useIsLoading();
-  const {loadComments} = useCommentsActions();
+	const getComments = useComments();
+	const isLoading = useIsLoading();
+	const { loadComments } = useCommentsActions();
 	const [commentData, setCommentData] = useState({
 		content: '',
 		parent_comment_id: null,
@@ -37,15 +37,22 @@ const Comments = () => {
 		return map;
 	}, [comments]);
 
-	const topLevelComments = useMemo(() => {
-		return comments?.filter((c) => !c.parent_comment_id);
-	}, [comments]);
+	const topLevelComments = () => {
+		return comments?.filter((c) => !c.parent_comment_id || []);
+	};
 
-
-	if (isLoading) {
+	if (isLoading && !comments) {
 		return (
-			<div className="min-h-screen flex items-center justify-center">
+			<div className="py-8 flex justify-center">
 				<Loader2 className="size-6 animate-spin" />
+			</div>
+		);
+	}
+
+	if (!isLoading && !comments) {
+		return (
+			<div className="py-8 flex justify-center">
+				<div>Failed to load comments</div>
 			</div>
 		);
 	}
@@ -72,7 +79,13 @@ const Comments = () => {
 				)}
 			</div>
 
-      <CreateComment id={id} replyTo={replyTo} setReplyTo={setReplyTo} commentData={commentData} setCommentData={setCommentData}  />
+			<CreateComment
+				id={id}
+				replyTo={replyTo}
+				setReplyTo={setReplyTo}
+				commentData={commentData}
+				setCommentData={setCommentData}
+			/>
 		</div>
 	);
 };

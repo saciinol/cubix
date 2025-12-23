@@ -21,12 +21,7 @@ const ProfileDetails = () => {
 	useEffect(() => {
 		if (id) {
 			loadProfile(id);
-		}
-	}, [id]);
-
-	useEffect(() => {
-		if (id) {
-			isFollowing(id);
+      isFollowing(id);
 		}
 	}, [id]);
 
@@ -77,7 +72,7 @@ const ProfileDetails = () => {
 				</div>
 			</div>
 
-			{id == user.user_id || id == user.id ? (
+			{parseInt(id) === user?.user_id ? (
 				<div className="flex justify-end">
 					<Button
 						variant="transparent"
@@ -97,9 +92,7 @@ const ProfileDetails = () => {
 						onClick={handleFollow}
 					>
 						{isLoading ? (
-							<div className="min-h-[calc(100vh-132px)] flex items-center justify-center">
-								<Loader2 className="size-6 animate-spin" />
-							</div>
+							<Loader2 className="size-6 animate-spin" />
 						) : (
 							<p>{following ? 'Following' : 'Follow'}</p>
 						)}
